@@ -28,8 +28,9 @@ body{
     display: flex;
     align-items: center;
     justify-content: center;
+    width:100%;
 
-    background-color: #86c3ff;
+    background-color: rgba(134, 195, 255, 0.8);
 }
 
 
@@ -39,7 +40,7 @@ body{
     width: 20%;
 
     border:none;
-    background-color: skyblue;
+    background: transparent;
     font-size: 1.5em;
 }
 
@@ -64,6 +65,7 @@ body{
     margin:auto;
     width:100%;
     border-collapse: collapse;
+    overflow: auto;
 }
 
 td,th{
