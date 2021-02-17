@@ -15,7 +15,7 @@ $(document).ready(function(){
     });
 
     $('#users_btn').click(function(){
-        $('#data').load('users.html');
+        $('#data').html('');
     });
 
     $('#update_btn').click(function(){
@@ -27,7 +27,22 @@ $(document).ready(function(){
     });
 
 
-
+    $(window).scroll(function(){
+        var st = $(window).scrollTop();
+        var ot = $('#menue').offset().top;
+        var lb= $('#logo').offset().top+$('#logo').outerHeight(true);
+        console.log(st+' '+ot);
+        if(st >= ot && lb<st) {
+            $('#menue').css({
+                position: "fixed",
+                top: "0px"
+            });
+        } else {
+            $('#menue').css({
+                position: "relative",
+            });
+        }
+    });
 
 
 });
