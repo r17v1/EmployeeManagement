@@ -1,6 +1,17 @@
 $(document).ready(function(){
+
+
+
     $('#department_btn').click(function(){
-        $('#data').load('department.html');
+        $.ajax({
+            url: '/ajax',
+            data: '',
+            method: 'POST',
+            success : function(res){
+                //console.log(res);
+                $('#data').html(res.toString());
+            }
+        });
     });
 
     $('#users_btn').click(function(){
@@ -14,4 +25,9 @@ $(document).ready(function(){
     $('#attendence_btn').click(function(){
         $('#data').load('users.html');
     });
+
+
+
+
+
 });

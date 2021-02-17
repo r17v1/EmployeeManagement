@@ -1,0 +1,18 @@
+<table>
+    <tr>
+        <% for(let i=0; i<data[0].length;i++){ %>
+            <th>
+                <%=data[0][i]%>
+            </th>
+        <% } %>
+    </tr>
+    <% for(let row=1; row<data.length; row++){ %>
+        <tr>
+            <%for(let col=0;col<data[row].length; col++){ %>
+                <td>
+                    <%=data[row][col]%>
+                </td>
+            <% } %>
+        </tr>
+    <% } %>
+</table>
