@@ -41,11 +41,11 @@ app.listen(3000, function() {
 
 app.post('/ajax',function(req,res){
 
-	data=[['Demo','Place'],['Datal','Data2l']];
+	data=[['Demo','Place'],['Datal','Data2l'],['Datal','Data2l'],['Datal','Data2l'],['Datal','Data2l'],['Datal','Data2l'],['Datal','Data2l'],['Datal','Data2l'],['Datal','Data2l']
+	,['Datal','Data2l'],['Datal','Data2l'],['Datal','Data2l'],['Datal','Data2l'],['Datal','Data2l'],['Datal','Data2l'],['Datal','Data2l'],['Datal','Data2l']
+	,['Datal','Data2l'],['Datal','Data2l'],['Datal','Data2l'],['Datal','Data2l'],['Datal','Data2l'],['Datal','Data2l'],['Datal','Data2l'],['Datal','Data2l']
+	,['Datal','Data2l'],['Datal','Data2l'],['Datal','Data2l'],['Datal','Data2l'],['Datal','Data2l'],['Datal','Data2l'],['Datal','Data2l'],['Datal','Data2l']];
 
-	console.log(ejs.renderFile('views/table.ejs',{data:data}));
-	//res.send(ejs.renderFile('html/table.html',{data:data}));
 	res.render('table',{data:data});
-	//httpMsgs.sendHTML(req,res,ejs.renderFile('html/table.html',{data:data}),true);
 	
 });
