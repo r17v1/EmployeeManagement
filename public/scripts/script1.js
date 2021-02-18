@@ -4,7 +4,7 @@ $(document).ready(function(){
 
     $('#department_btn').click(function(){
         $.ajax({
-            url: '/ajax',
+            url: '/ajaxdepartment',
             data: '',
             method: 'POST',
             success : function(res){
@@ -15,7 +15,14 @@ $(document).ready(function(){
     });
 
     $('#users_btn').click(function(){
-        $('#data').html('');
+        $.ajax({
+            url: '/ajaxuser',
+            data: '',
+            method: 'POST',
+            success : function(res){
+                $('#data').html(res.toString());
+            }
+        });
     });
 
     $('#update_btn').click(function(){
