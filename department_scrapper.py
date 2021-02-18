@@ -29,16 +29,15 @@ pwd_box = WebDriverWait(driver, 10).until(
         EC.presence_of_element_located((By.NAME, "userpwd"))
     )
 
-#user_id_box= driver.find_element_by_name("username")
+
 user_id_box.send_keys(USERID)
-#pwd_box=driver.find_element_by_name("userpwd")
 pwd_box.send_keys(PWD)
 pwd_box.send_keys(Keys.RETURN)
 
 
 #Department
 driver.get(DEPT_URL)
-#body=driver.find_element_by_tag_name('tbody')
+
 body=WebDriverWait(driver, 10).until(
         EC.presence_of_element_located((By.TAG_NAME, "tbody"))
     )
@@ -56,7 +55,7 @@ for tag in raw_data:
     if(tag.text=='ID Department Name Person Delete'):
         flag=True;
 for row in data:
-    SQL.execute('insert into department values("'+row[0]+'","'+row[1]+'",0)');    #insert in SQL
+    SQL.execute('insert or ignore into department values("'+row[0]+'","'+row[1]+'",0)');    #insert in SQL
 SQL.commit()
 
 
