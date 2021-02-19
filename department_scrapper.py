@@ -5,9 +5,10 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 import sqlite3
-SQL = sqlite3.connect('database.db')
+
 
 DIR = os.getcwd()
+SQL = sqlite3.connect(DIR+'/database/database.db')
 PATH= DIR+'\\driver\\chromedriver.exe'
 LOGIN_URL="http://192.168.1.21"
 DEPT_URL="http://192.168.1.21/csl/dpm"
@@ -53,9 +54,9 @@ for tag in raw_data:
     if(flag):
         data.append(tag.text.split(' '))
     if(tag.text=='ID Department Name Person Delete'):
-        flag=True;
+        flag=True
 for row in data:
-    SQL.execute('insert or ignore into department values("'+row[0]+'","'+row[1]+'",0)');    #insert in SQL
+    SQL.execute('insert or ignore into department values('+row[0]+',"'+row[1]+'",0)')    #insert in SQL
 SQL.commit()
 
 

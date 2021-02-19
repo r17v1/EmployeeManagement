@@ -5,9 +5,12 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 import sqlite3
-SQL = sqlite3.connect('database.db')
+
 
 DIR = os.getcwd()
+
+SQL = sqlite3.connect(DIR+'/database/database.db')
+
 PATH= DIR+'\\driver\\chromedriver.exe'
 LOGIN_URL="http://192.168.1.21"
 USER_URL="http://192.168.1.21/csl/user?first=0&last=999"
@@ -42,11 +45,11 @@ body=WebDriverWait(driver, 10).until(
         EC.presence_of_element_located((By.ID, "cc"))
     )
 
-raw_data=body.find_elements_by_tag_name('tr');
+raw_data=body.find_elements_by_tag_name('tr')
 data=[]
 for row in raw_data:
     row_data=[]
-    cells=row.find_elements_by_tag_name('td');
+    cells=row.find_elements_by_tag_name('td')
     for element in cells[1:]:
         if(len(element.text)==0):
             row_data.append('null')
@@ -64,7 +67,7 @@ for i in range(len(data)):
             break
 
 for row in data:
-    SQL.execute( 'insert or ignore into user values("'+row[1]+'","'+row[2]+'","'+row[0]+'")')
+    SQL.execute( 'insert or ignore into user values('+row[1]+',"'+row[2]+'",'+row[0]+')')
 SQL.commit()
 
 
