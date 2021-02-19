@@ -1,28 +1,45 @@
+let current_url='none';
+let current_data={sort:'', order:''};
+
+
+
 $(document).ready(function(){
 
-
-
-    $('#department_btn').click(function(){
+    let ajax_call=function(_url, _data){
         $.ajax({
-            url: '/ajaxdepartment',
-            data: '',
+            url: _url,
+            data: _data,
             method: 'POST',
             success : function(res){
                 //console.log(res);
                 $('#data').html(res.toString());
+                current_data=_data;
+                current_url=_url;
             }
         });
+    };
+
+    $('#department_btn').click(function(){
+        
+        data={
+            sort:'Department ID',
+            order:'asc'
+        };
+        url='/ajaxdepartment';
+
+        ajax_call(url,data);
+
     });
 
     $('#users_btn').click(function(){
-        $.ajax({
-            url: '/ajaxuser',
-            data: '',
-            method: 'POST',
-            success : function(res){
-                $('#data').html(res.toString());
-            }
-        });
+        data={
+            sort:'User ID',
+            order:'asc'
+        };
+        url='/ajaxuser';
+
+        ajax_call(url,data);
+
     });
 
     $('#update_btn').click(function(){
@@ -30,7 +47,13 @@ $(document).ready(function(){
     });
 
     $('#attendence_btn').click(function(){
-        $('#data').load('users.html');
+        data={
+            sort:'Date',
+            order:'desc'
+        };
+        url='/ajaxlog';
+
+        ajax_call(url,data);
     });
 
 
@@ -38,7 +61,6 @@ $(document).ready(function(){
         var st = $(window).scrollTop();
         var ot = $('#menue').offset().top;
         var lb= $('#logo').offset().top+$('#logo').outerHeight(true);
-        console.log(st+' '+ot);
         if(st >= ot && lb<st) {
             $('#menue').css({
                 position: "fixed",
@@ -51,5 +73,31 @@ $(document).ready(function(){
         }
     });
 
+    $('#data').on('click','table tr th',function(){
+        let btn_name=this.textContent.trim();
+        if(btn_name=='Time') return;
+        //alert(btn_name==current_data.sort);
+        if(btn_name==current_data.sort){
+            if(current_data.order=='asc'){
+                data={
+                    sort: btn_name,
+                    order:'desc'
+                }
+                ajax_call(current_url,data);
+            }else{
+                data={
+                    sort: btn_name,
+                    order:'asc'
+                }
+                ajax_call(current_url,data);
+            }
+        }else{
+            data={
+                sort: btn_name,
+                order:'asc'
+            }
+            ajax_call(current_url,data);
+        }
+    });
 
 });
