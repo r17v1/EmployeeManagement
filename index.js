@@ -2,20 +2,14 @@ const express = require('express');
 const bps = require('body-parser');
 const httpMsgs = require('http-msgs');
 const ejs = require('ejs');
-const {
-	query
-} = require('express');
+const { query } = require('express');
 const sqlite3 = require('sqlite3').verbose();
-
 
 const app = express();
 let db = new sqlite3.Database(__dirname + '/database/database.db', (err) => {
 	if (err) return console.error(err.message);
 	console.log('connected to database successfully!');
 });
-
-
-
 
 app.set('view engine', 'ejs');
 
@@ -30,64 +24,120 @@ app.set('view engine', 'ejs');
 app.use('/', express.static('public'));
 app.use('/home', express.static('public'));
 
-app.get('/', function (req, res) {
+app.get('/', function(req, res) {
 	res.sendFile('home.html', {
 		root: __dirname
 	});
 });
 
+app.get('/home', function(req, res) {});
 
-
-app.get('/home', function (req, res) {
-
-
-});
-
-
-app.listen(3000, function () {
+app.listen(3000, function() {
 	console.log('Listening at port 3000.');
 });
 
-
-
-
-
-app.post('/ajaxdepartment', function (req, res) {
-
+app.post('/ajaxdepartment', function(req, res) {
 	let query = 'select * from department;';
-
-	db.all(query, function (err, rows) {
-		data = [
-			['Department ID', 'Department Name', 'Number of People']
-		];
+	db.all(query, function(err, rows) {
+		data = [ [ 'Department ID', 'Department Name', 'Number of People' ] ];
 		if (err) {
 			console.log(err.message);
-		} else rows.forEach((row) => {
-			data.push([row.id, row.name, row.count]);
-		});
+		} else
+			rows.forEach((row) => {
+				data.push([ row.id, row.name, row.count ]);
+			});
 		res.render('table', {
 			data: data
 		});
 	});
-
 });
 
+app.post('/ajaxuser', function(req, res) {
 
-app.post('/ajaxuser', function (req, res) {
+	var sort;
+	
+	if(req.body.sort=='User ID') sort='id '+req.body.order;
+	else if(req.body.sort=='Department Name') sort='dept_name '+req.body.order;
+	else if(req.body.sort=='Name') sort='name '+req.body.order;
 
-	let query = 'select (select name from department where id=user.department_id)as dept_name, user.id as id, user.name as name from user;';
-	db.all(query, function (err, rows) {
-		data = [
-			['Department Name', 'User ID', 'Name']
-		];
+	let query =
+		'select (select name from department where id=user.department_id)as dept_name, user.id as id, user.name as name from user order by '+sort+';';
+
+	db.all(query, function(err, rows) {
+		data = [ [ 'Department Name', 'User ID', 'Name' ] ];
 		if (err) {
 			console.log(err.message);
-		} else rows.forEach((row) => {
-			data.push([row.dept_name, row.id, row.name]);
-		});
+		} else
+			rows.forEach((row) => {
+				data.push([ row.dept_name, row.id, row.name ]);
+			});
 		res.render('table', {
 			data: data
 		});
+	});
+});
+
+app.post('/ajaxlog', function(req, res) {
+
+	var sort;
+	if(req.body.sort=='Date') sort='_date '+req.body.order;
+	else if(req.body.sort=='ID') sort='user_id '+req.body.order;
+	else if(req.body.sort=='Name') sort='user_name '+req.body.order;
+	else if(req.body.sort=='Department') sort='dept_name '+req.body.order;
+
+	
+	let p= new Promise( (resolve,reject) => {
+		let query =
+		'select date(timestamp) as _date, user_id, (select name from user where user.id=log.user_id) as user_name, (select department.name from department where department.id=(select user.department_id from user where user.id=log.user_id) )as dept_name from log GROUP by user_id, date(timestamp) order by '+sort+';';
+		db.all(query,  function(err,rows){
+			data=[['Date', 'ID', 'Name', 'Department']];
+			if (err) {
+				reject(console.log(err.message));
+			} else{
+				rows.forEach((row) => {
+					data.push([ row._date, row.user_id, row.user_name, row.dept_name ]);
+				});
+				resolve();
+			}
+		})
+	
+	});
+
+	let finalrender = function(data,res){
+		len=0;
+		data.forEach((row)=>{
+			len=Math.max(len,row.length);
+		});
+		for(let i=0;i<data.length;i++){
+			while(data[i].length<len){
+				if(i==0) data[i].push('Time');
+				else data[i].push('');
+			}
+		}
+		res.render('table', {
+			data: data
+		});
+	}
+
+	p.then(()=>{
+		let j=1;
+		for(let i=1; i<data.length;i++){
+			
+			let query='select time(timestamp)as time from log where date(timestamp)="'+data[i][0]+'" and user_id="'+data[i][1]+'";';
+			db.all(query,  function(err,rows){
+				if (err) {
+					console.log(err.message);
+				} else
+					rows.forEach( (row) => {
+						data[i].push(row.time);
+					});
+				if(j==data.length-1){
+					
+					finalrender(data,res);
+				}
+				j++;	
+			});
+		}
 	});
 
 });
