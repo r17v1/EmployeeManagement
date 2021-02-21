@@ -1,0 +1,42 @@
+
+<h1>OPTIONS</h1>
+
+
+<% if(search==true){ %>
+<div>
+        <label>Name/ID (separate by ',' for multiple values)</label>
+        <input type="text" id="search" name="search" placeholder="Search by Name or ID">
+</div>
+<% } %>
+
+
+<% if(date==true){ %>
+
+ <div>   
+         <label>From</label>
+        <input type="date" id="fdate" name="fdate">
+</div>
+<div>    
+        <label>To</label>
+        <input type="date" id="tdate" name="tdate">
+</div>
+<% } %>
+
+
+<% if(dept_list==true){ %>
+
+<div>
+        <label>Department</label>
+        <select name="department" id="department_selecter">
+            <option selected="selected">All</option>
+            <option>Not Assigned</option>
+            <% departments.forEach( (dept) => {  %>
+                <option><%= dept %></option>
+            <% } ); %>
+        </select>
+</div>
+<% } %>
+<div id='buttons'>
+    <button type="button" id="search_btn">Search</button>
+    <button type="button" id="dl_btn">Download</button>
+</div>

@@ -1,6 +1,6 @@
 let current_url='none';
 let current_data={sort:'', order:''};
-
+let default_set=[false,false];
 
 
 $(document).ready(function(){
@@ -12,12 +12,47 @@ $(document).ready(function(){
             method: 'POST',
             success : function(res){
                 //console.log(res);
-                $('#data').html(res.toString());
+                if(!_data.download)
+                    $('#data').html(res.toString());
+                else{
+                   window.location=res.toString();
+                }
+                
+                $('#fdate').ready(()=>{
+                    if(!default_set[0]){
+                        $('#fdate').val(new Date().toISOString().slice(0, 10));
+                        default_set[0]=true;
+                     }   
+                });
+
+                $('#tdate').ready(()=>{
+                    if(!default_set[1]){
+                        $('#tdate').val(new Date().toISOString().slice(0, 10));
+                        default_set[1]=true;
+                     }
+                });
+
                 current_data=_data;
                 current_url=_url;
             }
         });
-    };
+    }
+
+    let ajax_options= function(search, date, dept_list){
+        $.ajax({
+            url: '/getoptions',
+            data: {
+                search:search,
+                date:date,
+                dept_list:dept_list
+            },
+            method: 'POST',
+            success : function(res){
+                //console.log(res);
+                $('#options').html(res.toString());
+            }
+        });
+    }
 
     $('#department_btn').click(function(){
         
@@ -26,20 +61,22 @@ $(document).ready(function(){
             order:'asc'
         };
         url='/ajaxdepartment';
-
+       
         ajax_call(url,data);
+        $('#options').html('');
 
     });
 
     $('#users_btn').click(function(){
         data={
             sort:'User ID',
-            order:'asc'
+            order:'asc',
+            search : '',
+            department:'All'
         };
-        url='/ajaxuser';
-
-        ajax_call(url,data);
-
+        url='/ajaxuser';           
+        ajax_options(true,false,true);
+        ajax_call(url,data,);
     });
 
     $('#update_btn').click(function(){
@@ -47,12 +84,17 @@ $(document).ready(function(){
     });
 
     $('#attendence_btn').click(function(){
+        default_set=[false,false];
         data={
             sort:'Date',
-            order:'desc'
+            order:'desc',
+            tdate: new Date().toISOString().slice(0, 10),
+            fdate: new Date().toISOString().slice(0, 10),
+            search: '',
+            department: 'All'
         };
         url='/ajaxlog';
-
+        ajax_options(true,true,true);
         ajax_call(url,data);
     });
 
@@ -100,4 +142,35 @@ $(document).ready(function(){
         }
     });
 
+    $('#options').on('click','#search_btn', ()=>{
+       
+            data={
+                sort:current_data.sort,
+                order:current_data.order,
+                search: $('#search').val().trim(),
+                fdate: $('#fdate').val(),
+                tdate: $('#tdate').val(),
+                department: $( "#department_selecter option:selected" ).text()
+            }
+            ajax_call(current_url,data);
+            //alert('clicked');
+    });
+
+    $('#options').on('click','#dl_btn', ()=>{
+       
+        data={
+            sort:current_data.sort,
+            order:current_data.order,
+            search: $('#search').val().trim(),
+            fdate: $('#fdate').val(),
+            tdate: $('#tdate').val(),
+            department: $( "#department_selecter option:selected" ).text(),
+            download:true
+        }
+        ajax_call(current_url,data);
+        //alert('clicked');
 });
+
+});
+
+

@@ -59,14 +59,17 @@ body{
     margin:auto;
     margin-top: 2em;
     overflow-y: auto;
-
+    padding:0.2em;
     -moz-box-shadow:    inset 0 0 10px #000000;
     -webkit-box-shadow: inset 0 0 10px #000000;
     box-shadow:         inset 0 0 10px #000000;
 }
+#data:empty{
+    display:none;
+}
 #data > table{
-    margin:0.1em;
-    width:99.7%;
+    /*margin:0.1em;*/
+    width:100%;/*99.7%;*/
     border-collapse: collapse;
 }
 
@@ -87,4 +90,81 @@ th{
 
 th:hover{
     background-color: rgba(133, 194, 255, 0.8);
+}
+
+
+#options{
+    /*border: solid thick rgba(86, 170, 255, 0.8);*/
+    width:40%;
+    margin:auto;
+    margin-top: 1em;
+    margin-bottom: 1em;
+    padding:1em;
+    border-radius: 3%;
+    -moz-box-shadow:    inset 0 0 10px #000000;
+    -webkit-box-shadow: inset 0 0 10px #000000;
+    box-shadow:         inset 0 0 10px #000000;
+}
+
+#options > h1{
+    text-align: center;
+    margin-bottom:2em;
+    color:rgba(64, 159, 255, 0.8);
+}
+
+
+#options > div {
+    display:block;
+    margin:auto;
+    width:80%;
+    margin-top: 1em;
+}
+
+#options > div > input{
+    width:100%;
+    height: 3vh;
+    display:block;
+    border:none;
+    padding:0.5em;
+    -moz-box-shadow:    inset 0 0 10px #000000;
+    -webkit-box-shadow: inset 0 0 10px #000000;
+    box-shadow:         inset 0 0 10px #000000;
+  
+}
+
+
+#options > div > label{
+    display:block;
+    margin-bottom: 0.2em;
+    margin-left:none;
+    padding-left:none;
+}
+
+#department_selecter{
+    display:block;
+    width:100%;
+    height:3vh;
+    margin-bottom: 1em;
+}
+
+
+#buttons{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width:100%;
+    text-align: center;
+}
+
+#buttons > button{
+    width:40%;
+    height: 5vh;
+    font-size: 1em;
+    margin:auto;
+    
+}
+
+
+#options:empty{
+    display:none;
 }
