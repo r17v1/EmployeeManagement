@@ -4,6 +4,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.chrome.options import Options 
 import sqlite3
 
 
@@ -16,7 +17,10 @@ LOGIN_URL="http://192.168.1.21"
 USER_URL="http://192.168.1.21/csl/user?first=0&last=999"
 
 
-driver= webdriver.Chrome(PATH)
+chrome_options = Options()  
+chrome_options.add_argument("--headless")  
+
+driver = webdriver.Chrome(PATH,   chrome_options=chrome_options) 
 
 
 #LOGIN
