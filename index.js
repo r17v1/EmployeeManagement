@@ -138,7 +138,7 @@ app.post('/ajaxuser', function(req, res) {
 app.post('/ajaxlog', function(req, res) {
 
 	var sort;
-	if(req.body.sort=='Date') sort='_date '+req.body.order;
+	if(req.body.sort=='Date') sort='timestamp '+req.body.order;
 	else if(req.body.sort=='ID') sort='user_id '+req.body.order;
 	else if(req.body.sort=='Name') sort='user_name '+req.body.order;
 	else if(req.body.sort=='Department') sort='dept_name '+req.body.order;
