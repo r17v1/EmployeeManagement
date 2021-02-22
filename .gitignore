@@ -2,3 +2,4 @@
 .vscode/settings.json
 downloads/attlog.dat
 driver/chromedriver.exe
+public/data.xlsx
