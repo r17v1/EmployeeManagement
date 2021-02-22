@@ -12,6 +12,16 @@ SQL = sqlite3.connect(DIR+'/database/database.db')
 PATH= DIR+'\\driver\\chromedriver.exe'
 LOGIN_URL="http://192.168.1.21"
 DEPT_URL="http://192.168.1.21/csl/dpm"
+
+
+
+SQL.execute('delete from log')
+SQL.execute('delete from user')
+SQL.execute('delete from department')
+
+
+
+
 driver= webdriver.Chrome(PATH)
 
 

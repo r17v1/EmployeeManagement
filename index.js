@@ -2,6 +2,7 @@ const express = require('express');
 const bps = require('body-parser');
 const ejs = require('ejs');
 const { query } = require('express');
+const {spawn} = require('child_process');
 const sqlite3 = require('sqlite3').verbose();
 const Excel=require('exceljs');
 
@@ -67,14 +68,14 @@ app.post('/ajaxuser', function(req, res) {
 		let words=req.body.search.split(',');
 		for(let i=0;i<words.length;i++){
 			if(i==0){
-				search='where (name like "%'+words[i]+'%" ';
+				search='where (name like "%'+words[i].trim()+'%" ';
 				flag=true;
 			}
 			else{
-				search =search+ 'or name like "%'+words[i]+'%" ';
+				search =search+ 'or name like "%'+words[i].trim()+'%" ';
 			}
 			if(!isNaN(words[i])){
-				search_id.push(words[i]);
+				search_id.push(words[i].trim());
 			}
 		}
 	}
@@ -126,7 +127,9 @@ app.post('/ajaxuser', function(req, res) {
 				column.alignment={horizontal:'left'}
 			  });
 			worksheet.getRow(1).font = {bold: true};
-		 	workbook.xlsx.writeFile(__dirname+'/public/data.xlsx').then(res.send('/data.xlsx'));
+		 	workbook.xlsx.writeFile(__dirname+'/public/data.xlsx').then(setTimeout(()=>{
+				res.send('/data.xlsx')
+			},500));
 			 
 		}
 	});
@@ -139,6 +142,7 @@ app.post('/ajaxlog', function(req, res) {
 	else if(req.body.sort=='ID') sort='user_id '+req.body.order;
 	else if(req.body.sort=='Name') sort='user_name '+req.body.order;
 	else if(req.body.sort=='Department') sort='dept_name '+req.body.order;
+	else console.log('sort error');
 	let query='select date(timestamp) as _date, user_id, (select name from user where user.id=log.user_id) as user_name, (select department.name from department where department.id=(select user.department_id from user where user.id=log.user_id) )as dept_name from log GROUP by user_id, date(timestamp) ';
 
 
@@ -151,14 +155,14 @@ app.post('/ajaxlog', function(req, res) {
 		let words=req.body.search.split(',');
 		for(let i=0;i<words.length;i++){
 			if(i==0){
-				search='having (user_name like "%'+words[i]+'%" ';
+				search='having (user_name like "%'+words[i].trim()+'%" ';
 				flag=true;
 			}
 			else{
-				search =search+ 'or user_name like "%'+words[i]+'%" ';
+				search =search+ 'or user_name like "%'+words[i].trim()+'%" ';
 			}
 			if(!isNaN(words[i])){
-				search_id.push(words[i]);
+				search_id.push(words[i].trim());
 			}
 		}
 	}
@@ -241,7 +245,9 @@ app.post('/ajaxlog', function(req, res) {
 				column.alignment={horizontal:'left'}
 			  });
 			worksheet.getRow(1).font = {bold: true};
-		 	workbook.xlsx.writeFile(__dirname+'/public/data.xlsx').then(res.send('/data.xlsx'));
+		 	workbook.xlsx.writeFile(__dirname+'/public/data.xlsx').then(setTimeout(()=>{
+				 res.send('/data.xlsx')
+			 },500));
 		}
 	}
 
@@ -291,4 +297,18 @@ app.post('/getoptions', function(req,res){
 			});
 	});
 	
+});
+
+
+app.post('/ajaxupdate',function(req,res){
+	const python = spawn('python', ['department_scrapper.py']);
+	python.on('close',()=>{
+		const python2=spawn('python',['user_scrapper.py']);
+		python2.on('close',()=>{
+			const python3=spawn('python',['log_scrapper.py']);
+			python3.on('close',()=>{
+				res.send('success');
+			});
+		});
+	});
 });

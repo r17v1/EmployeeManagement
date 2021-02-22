@@ -13,7 +13,10 @@ $(document).ready(function(){
             success : function(res){
                 //console.log(res);
                 if(!_data.download)
-                    $('#data').html(res.toString());
+                    if(_url=='/ajaxupdate'){
+                        $('#update').html('<img src="images/success.png" alt="Success">')
+                    }else
+                        $('#data').html(res.toString());    
                 else{
                    window.location=res.toString();
                 }
@@ -55,7 +58,7 @@ $(document).ready(function(){
     }
 
     $('#department_btn').click(function(){
-        
+        $('#update').html('');
         data={
             sort:'Department ID',
             order:'asc'
@@ -68,6 +71,7 @@ $(document).ready(function(){
     });
 
     $('#users_btn').click(function(){
+        $('#update').html('');
         data={
             sort:'User ID',
             order:'asc',
@@ -80,10 +84,14 @@ $(document).ready(function(){
     });
 
     $('#update_btn').click(function(){
-        $('#data').load('users.html');
+        $('#data').html('');
+        $('#options').html('');
+        $('#update').html('<div class="loader"></div>');
+        ajax_call('/ajaxupdate',current_data);
     });
 
     $('#attendence_btn').click(function(){
+        $('#update').html('');
         default_set=[false,false];
         data={
             sort:'Date',
@@ -99,45 +107,47 @@ $(document).ready(function(){
     });
 
 
-    $(window).scroll(function(){
+    /*$(window).scroll(function(){
         var st = $(window).scrollTop();
-        var ot = $('#menue').offset().top;
-        var lb= $('#logo').offset().top+$('#logo').outerHeight(true);
-        if(st >= ot && lb<st) {
-            $('#menue').css({
+        var ot = $('th').offset().top;
+        //var lb= $('#logo').offset().top+$('#logo').outerHeight(true);
+        if(st >= ot) {
+            $('th').css({
                 position: "fixed",
                 top: "0px"
             });
         } else {
-            $('#menue').css({
+            $('th').css({
                 position: "relative",
             });
         }
-    });
+    });*/
 
     $('#data').on('click','table tr th',function(){
+        current_data.download=false;
         let btn_name=this.textContent.trim();
         if(btn_name=='Time') return;
         //alert(btn_name==current_data.sort);
+        data=current_data;
+
         if(btn_name==current_data.sort){
             if(current_data.order=='asc'){
-                data={
-                    sort: btn_name,
-                    order:'desc'
-                }
+                
+                data.sort= btn_name,
+                data.order='desc'
+        
                 ajax_call(current_url,data);
             }else{
-                data={
-                    sort: btn_name,
-                    order:'asc'
-                }
+                
+                data.sort= btn_name,
+                data.order='asc'
+                
                 ajax_call(current_url,data);
             }
         }else{
-            data={
-                sort: btn_name,
-                order:'asc'
-            }
+            
+            data.sort= btn_name,
+            data.order='asc'
             ajax_call(current_url,data);
         }
     });

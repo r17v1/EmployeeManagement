@@ -67,7 +67,7 @@ for i in range(len(data)):
             break
 
 for row in data:
-    SQL.execute( 'insert or ignore into user values('+row[1]+',"'+row[2]+'",'+row[0]+')')
+    SQL.execute( 'insert or ignore into user values('+str(row[1])+',"'+str(row[2])+'",'+str(row[0])+')')
 SQL.commit()
 
 
