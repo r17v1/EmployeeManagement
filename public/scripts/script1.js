@@ -3,6 +3,7 @@ let current_data = {
 	sort: '',
 	order: ''
 };
+let selected = null;
 let default_set = [ false, false ];
 
 $(document).ready(function() {
@@ -51,6 +52,7 @@ $(document).ready(function() {
 			},
 			method: 'POST',
 			success: function(res) {
+				$('#settings_icon').css('display','block');
 				//console.log(res);
 				$('#options').html(res.toString());
 			}
@@ -58,6 +60,9 @@ $(document).ready(function() {
 	};
 
 	$('#department_btn').click(function() {
+		selected=this;
+		$('#settings_icon').css('display','none');
+		$('#update').css('display','none');
 		$('#update').html('');
 		data = {
 			sort: 'Department ID',
@@ -70,6 +75,8 @@ $(document).ready(function() {
 	});
 
 	$('#users_btn').click(function() {
+		$('#update').css('display','none');
+		selected=this;
 		$('#update').html('');
 		data = {
 			sort: 'User ID',
@@ -83,6 +90,9 @@ $(document).ready(function() {
 	});
 
 	$('#update_btn').click(function() {
+		$('#settings_icon').css('display','none');
+		$('#update').css('display','block');
+		selected=this;
 		$('#data').html('');
 		$('#options').html('');
 		$('#update').html('<div class="loader"></div>');
@@ -90,6 +100,8 @@ $(document).ready(function() {
 	});
 
 	$('#attendence_btn').click(function() {
+		$('#update').css('display','none');
+		selected=this;
 		$('#update').html('');
 		default_set = [ false, false ];
 		data = {
@@ -154,4 +166,26 @@ $(document).ready(function() {
 		ajax_call(current_url, data);
 		//alert('clicked');
 	});
+
+	
+	$('body').on('click',()=>{
+		//if(selected)
+			//selected.focus();
+	})
+	$('#settings_icon').click(()=>{
+		$('#overlay').css('display','block');
+	});
+
+	window.addEventListener('click', function(e){   
+		if (	(document.getElementById('options').contains(e.target)||
+				document.getElementById('settings_icon').contains(e.target))&&
+				!(document.getElementById('search_btn').contains(e.target)||
+				document.getElementById('dl_btn').contains(e.target))
+			){
+		  // Clicked in box
+		} else{
+			$('#overlay').css('display','none');
+		}
+	  });
+	
 });

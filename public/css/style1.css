@@ -1,15 +1,16 @@
 body{
-    background-color: white(201, 250, 250);
-    margin-top: 8px;
-    margin-bottom: 8px;
+    background-color: #0E1720/*white(201, 250, 250)*/;
+    margin-top: 0px;
+    margin-bottom: 0px;
     margin-left: 0;
     margin-right: 0;
     padding: 0;
     border:0;
+    font-family: 'Montserrat', sans-serif;
 }
 
 #logo{
-    display: block;
+    display: none; /*block*/
     position: relative;
     height: 15vh;
     width: 100%;
@@ -30,7 +31,7 @@ body{
     justify-content: center;
     width:100%;
 
-    background-color: rgba(134, 195, 255, 0.8);
+    background-color:#0D2944; /*rgba(134, 195, 255, 0.8);*/
 }
 
 
@@ -38,10 +39,12 @@ body{
     margin:none;
     height:8vh;
     width: 20%;
-
+    border-radius: 0.5em;
     border:none;
     background: transparent;
     font-size: 1.5em;
+    color:white;
+    font-weight: bold;
 }
 
 #menue > button:hover{
@@ -56,36 +59,42 @@ body{
 
 #data{
     width: 80%;
-    max-height: 80vh;
+    height: 80vh;
     margin:auto;
     margin-top: 2em;
     overflow-y: auto;
     padding:0.2em;
-    -moz-box-shadow:    inset 0 0 10px #000000;
+   /* -moz-box-shadow:    inset 0 0 10px #000000;
     -webkit-box-shadow: inset 0 0 10px #000000;
-    box-shadow:         inset 0 0 10px #000000;
+    box-shadow:         inset 0 0 10px #000000;*/
 }
 #data:empty{
     display:none;
 }
 #data > table{
+    margin-top: auto;
     /*margin:0.1em;*/
     width:100%;/*99.7%;*/
     border-collapse: collapse;
 }
 
 td,th{
-    border: 1px solid black;
+    
+    color:rgb(199, 199, 199);
     text-align: left;
     padding: 8px;
     white-space: nowrap;
+    font-size:0.9em;
 }
 
 tr:nth-child(odd){
-    background-color: #dddddd;
+    background-color: #2C70B3;
+}
+tr:nth-child(even){
+    background-color:#225C96;
 }
 th{
-    background-color: rgba(86, 170, 255, 0.8);
+    background-color: /*rgba(86, 170, 255, 0.8)*/#0D2944;
     color:white;
     position:sticky;
     top:0;
@@ -96,12 +105,28 @@ th:hover{
 }
 
 
+#overlay{
+    z-index: 90;
+    display: none;
+    position: fixed;
+    top:0;
+    left:0;
+    margin:0;
+    width:100%;
+    height:100vh;
+    background-color: rgba(255,255,255,0.4);
+}
+
 #options{
     /*border: solid thick rgba(86, 170, 255, 0.8);*/
-    width:40%;
+    display: block;
+    position: relative;
     margin:auto;
-    margin-top: 1em;
-    margin-bottom: 1em;
+    transform: translate(0, -50%); 
+    top:50vh;
+    background-color: #0D2944;
+    z-index: 100;
+    width:40%;
     padding:1em;
     border-radius: 3%;
     -moz-box-shadow:    inset 0 0 10px #000000;
@@ -112,7 +137,7 @@ th:hover{
 #options > h1{
     text-align: center;
     margin-bottom:2em;
-    color:rgba(64, 159, 255, 0.8);
+    color:white;
 }
 
 
@@ -137,6 +162,7 @@ th:hover{
 
 
 #options > div > label{
+    color: rgb(199, 199, 199);
     display:block;
     margin-bottom: 0.2em;
     margin-left:none;
@@ -157,6 +183,7 @@ th:hover{
     justify-content: center;
     width:100%;
     text-align: center;
+    padding-bottom: 3em;
 }
 
 #buttons > button{
@@ -188,9 +215,45 @@ th:hover{
   }
 
   #update{
-      display:block;
+      display:none;
       margin:auto;
       margin-top: 3em;
       width:120px;
       height:120px;
+  }
+
+
+
+
+  ::-webkit-scrollbar {
+    width: 0.75em;
+  }
+  
+  /* Track */
+  ::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 0.5em grey; 
+    border-radius: 1em;
+  }
+   
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background:#0D2944; 
+    border-radius: 1em;
+  }
+  
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #16446F; 
+  }
+
+  #settings_icon{
+      position: fixed;
+      top:0;
+      left:0;
+      margin:0;
+      height: 8vh;
+      display:none;
+  }
+  #settings_icon:hover{
+    filter:invert(.9);
   }
