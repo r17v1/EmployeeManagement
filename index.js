@@ -301,14 +301,8 @@ app.post('/getoptions', function(req,res){
 
 
 app.post('/ajaxupdate',function(req,res){
-	const python = spawn('python', ['department_scrapper.py']);
+	const python = spawn('python', ['scrapper.py']);
 	python.on('close',()=>{
-		const python2=spawn('python',['user_scrapper.py']);
-		python2.on('close',()=>{
-			const python3=spawn('python',['log_scrapper.py']);
-			python3.on('close',()=>{
-				res.send('success');
-			});
-		});
+		res.send('success');
 	});
 });
