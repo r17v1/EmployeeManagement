@@ -54,10 +54,11 @@ options.add_experimental_option(
         "safebrowsing_for_trusted_sources_enabled": False,
         "safebrowsing.enabled": False,
     },
-)
+) 
+options.binary_location = DIR+"\\driver\\chrome\\App\\Chrome-bin\\chrome.exe"
+options.add_argument("--headless")
 options.add_argument("--disable-gpu")
 options.add_argument("--disable-software-rasterizer")
-options.add_argument("--headless")
 driver = webdriver.Chrome(PATH, chrome_options=options)
 enable_download_headless(driver, DIR + "\\downloads\\")
 

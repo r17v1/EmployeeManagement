@@ -19,8 +19,17 @@
             <button type="button" id="attendence_btn">Log</button>
             <button type="button" id="users_btn">Users</button>
             <button type="button" id="department_btn">Department</button>
-            <button type="button" id="account_btn">Account</button>
+            <button type="button" id="account_btn">
+                Account
+                <div id='dropdown_content'>
+                    <list>
+                        <li><a href="/updatePassword">Change Password</a></li>
+                        <li><a href="/profile">Profile</a></li>
+                    </list>
+                </div>
+            </button>
             <button type="button" id="update_btn">Update</button>
+            <button  id="logout_btn">LogOut</button>
         </div>
         <img src="images/settings.png" id="settings_icon">
         <script src="" async defer></script>

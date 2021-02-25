@@ -9,9 +9,9 @@ body{
     font-family: 'Montserrat', sans-serif;
 }
 
-#loginbox{
+.formbox{
     background-color: white;
-    opacity: 0.2;
+    opacity: 0.7;
     display: block;
     width:40%;
     margin:auto;
@@ -24,12 +24,12 @@ body{
 }
 
 @media screen and (max-width: 800px){
-    #loginbox{
+    .formbox{
         width:80%;
     }
 }
 
-#loginbox input{
+.formbox input{
     display:block;
     position: relative;
     margin:2em;
@@ -44,12 +44,12 @@ body{
     border-radius: 1em;
 }
 
-#loginbox input:focus{
+.formbox input:focus{
     box-shadow: 0 0 3pt 2pt black;
     outline:none;
 }
 
-#loginbox button{
+.formbox button{
     display: block;
     position: relative;
     width:20%;
@@ -61,17 +61,23 @@ body{
     margin-bottom: 2em;
 }
 
-#loginbox button:hover{
+.formbox button:hover{
     background-color: white;
 }
-#error_message{
+.error{
     display: block;
-    position: relative;;
+    position: relative;
     width:50%;
-    height:1.5em;
     color:rgb(179, 0, 0);
     margin-bottom: 1em;
+    margin-top:1em;
     transform: translate(-50%,0);
     text-align: center;
     left:50%;
+}
+
+h1{
+    color:black;
+    text-align: center;
+    display: block;
 }

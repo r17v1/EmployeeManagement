@@ -62,6 +62,10 @@ $(document).ready(function() {
 		});
 	};
 
+	$('#logout_btn').click(()=>{
+		window.location.replace('/logout');
+	});
+
 	$('#department_btn').click(function() {
 		selected=this;
 		$('#settings_icon').css('display','none');
@@ -110,19 +114,6 @@ $(document).ready(function() {
 		ajax_call(url, data);
 	});
 
-	$('#account_btn').click(function() {
-		selected=this;
-		$('#settings_icon').css('display','none');
-		$('#update').css('display','none');
-		$('#update').html('');
-		data = {
-		};
-		url = '/ajaxaccount';
-
-		ajax_call(url, data);
-		$('#options').html('');
-	});
-
 
 	$('#update_btn').click(function() {
 		$('#settings_icon').css('display','none');
@@ -161,8 +152,8 @@ $(document).ready(function() {
 		data = {
 			sort: current_data.sort,
 			order: current_data.order,
-			search: $('#search').val().trim(),
-			fdate: $('#fdate').val(),
+			search: ($('#search').val())?$('#search').val().trim():null,
+			fdate:  $('#fdate').val(),
 			tdate: $('#tdate').val(),
 			department: $('#department_selecter option:selected').text()
 		};
@@ -187,80 +178,6 @@ $(document).ready(function() {
 	$('#settings_icon').click(()=>{
 		$('#overlay').css('display','block');
 	});
-
-	$('#data').on('click','#submit_change_password',()=>{
-		$('#success_change').text(''); 
-		if($('#new_pwd').val()!=$('#cnew_pwd').val()){ 
-			$('#pwd_mismatch_change').text('New password and confirm password must match');
-			return;
-		}
-		else if(!$('#new_pwd').val().length){ 
-			$('#pwd_mismatch_change').text('New password cannot be empty');
-			return;
-		}
-
-		$.ajax({
-			url:'/ajaxchangepassword',
-			method:"POST",
-			data:{
-				current_pwd: $('#current_pwd').val(),
-				new_pwd: $('#new_pwd').val(),
-			},
-			success: (res)=>{
-				console.log(res);
-				if(res=='success'){
-					$('#success_change').text('Done!'); 
-					$('#pwd_err').text('');
-				}else{
-					$('#pwd_err').text('Incorrect password!');
-					$('#pwd_mismatch_change').text('');
-				}
-			}
-		});
-	})
-
-	$('#data').on('click','#submit_new_user',()=>{
-		$('#success_new_user').text(''); 
-		if($('#new_user_pwd').val()!=$('#cnew_user_pwd').val()){ 
-			$('#pwd_mismatch_new').text('Password and confirm password must match');
-			return;
-		}
-		else if(!$('#new_user_pwd').val().length){ 
-			$('#pwd_mismatch_new').text('Password cannot be empty');
-			return;
-		}
-
-		$.ajax({
-			url:'/ajaxnewuser',
-			method:"POST",
-			data:{
-				username: $('#new_user_username').val(),
-				password: $('#new_user_pwd').val(),
-				type:$('#usertype:selected').text()
-			},
-			success: (res)=>{
-				console.log(res);
-				if(res=='success'){
-					$('#success_new_user').text('Done!'); 
-					$('#username_taken').text('');
-				}else{
-					$('#username_taken').text('Username Taken!');
-					$('#pwd_mismatch_new').text('');
-				}
-			}
-		});
-	})
-
-	$('#data').on('click','#logout',()=>{
-		$.ajax({
-			url:'/logout',
-			method:'POST',
-			success:()=>{
-				window.location.replace('/');
-			}	
-		})
-	});
-
 
 
 	window.addEventListener('click', function(e){   

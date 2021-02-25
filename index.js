@@ -57,15 +57,32 @@ app.get('/login', (req,res)=>{
 });
 
 app.post('/ajaxlogin',(req,res)=>{
-	db.all('select * from login where username ="'+req.body.username+'" and password="'+req.body.password+'";',(err, row)=>{
+	let letters = /^[0-9a-zA-Z]+$/;
+	let username=req.body.username;
+	if(!letters.test(username) ||username.length!=4 )
+	{
+		res.send('failed');
+		return;
+	}
+	db.all('select * from login where username ="'+username+'";',(err, row)=>{
 		if(err){
 			console.log(err);
 			res.send('failed');
 		}else{
 			if (row.length) {
-				req.session.userId = req.body.username;
-				req.session.userType = row[0].type;
-				res.send('success');
+				let password='';
+				if(row[0].autopass==1) password=req.body.password;
+				else{
+					for(let i=0;i<req.body.password.length;i++){
+						password+=req.body.password.charCodeAt(i).toString(32);
+					}
+				}
+				if(password==row[0].password){
+					req.session.userId = req.body.username;
+					req.session.userType = row[0].type;
+					req.session.firstLogin= (row[0].autopass==1);
+					res.send('success');
+				}else res.send('failed');
 			} else res.send('failed');
 		}
 	});
@@ -75,18 +92,29 @@ app.post('/ajaxlogin',(req,res)=>{
 //Home screen'
 //Send the home.html file when url is visited
 app.get('/', function(req, res) {
-	//console.log(req.session);
 	if(!req.session.userId)
 		res.redirect('/login');
+	else if(req.session.firstLogin){
+		res.redirect('/updatePassword')
+	}
 	else
 	res.sendFile('home.html', {
 		root: __dirname
 	});
 });
 
+//Update Password screen
+app.get('/updatePassword',(req,res)=>{
+	if(!req.session.userId)
+		res.redirect('/login');
+	else res.sendFile('updatePassword.html',{root:__dirname});
+});
+
+
 //AJAX POST request to get department data
 //--------------------------------------------------------------------------------------------------
 app.post('/ajaxdepartment', function(req, res) {
+	if(!req.session.userId) return;
 	let query = 'select * from department;';
 	db.all(query, function(err, rows) {
 		data = [ [ 'Department ID', 'Department Name', 'Number of People' ] ];
@@ -105,6 +133,7 @@ app.post('/ajaxdepartment', function(req, res) {
 //AJAX POST to get user data
 //--------------------------------------------------------------------------------------------------------------
 app.post('/ajaxuser', function(req, res) {
+	if(!req.session.userId) return;
 	//req.body contains sort and search information
 	var sort;
 	if (req.body.sort == 'User ID') sort = 'id ' + req.body.order;
@@ -205,7 +234,8 @@ app.post('/ajaxuser', function(req, res) {
 //POST to get log data
 //-----------------------------------------------------------------------------------------------
 app.post('/ajaxlog', function(req, res) {
-	var sort;
+	if(!req.session.userId)return;	
+	let sort;
 	if (req.body.sort == 'Date') sort = 'timestamp ' + req.body.order;
 	else if (req.body.sort == 'ID') sort = 'user_id ' + req.body.order;
 	else if (req.body.sort == 'Name') sort = 'user_name ' + req.body.order;
@@ -216,9 +246,9 @@ app.post('/ajaxlog', function(req, res) {
 		' (select department.name from department where department.id=(select user.department_id from user where user.id=log.user_id)'+
 		' )as dept_name from log GROUP by user_id, date(timestamp) ';
 	let flag = false;
-	var search = '';
-	var search_id = [];
-	if (req.body.search != '') {
+	let search = '';
+	let search_id = [];
+	if (req.body.search != '' && req.session.userType==1) {
 		let words = req.body.search.split(',');
 		for (let i = 0; i < words.length; i++) {
 			if (i == 0) {
@@ -238,12 +268,16 @@ app.post('/ajaxlog', function(req, res) {
 	if (search_id.length > 0) {
 		query += 'or user_id in (' + search_id.join(',') + ') ';
 	}
-
 	if (flag) {
 		query += ') ';
 	}
 
-	if (req.body.department != 'All') {
+	if(req.session.userType!=1){
+		query+='having user_id='+req.session.userId+' ';
+		flag=true;
+	}
+
+	else if (req.body.department != 'All') {
 		var extra = 'and ';
 		if (!flag) {
 			extra = 'having ';
@@ -263,6 +297,7 @@ app.post('/ajaxlog', function(req, res) {
 	}
 
 	query += 'order by ' + sort + ';';
+	//console.log(query);
 	let p = new Promise((resolve, reject) => {
 		db.all(query, function(err, rows) {
 			data = [ [ 'Date', 'ID', 'Name', 'Department' ] ];
@@ -346,6 +381,7 @@ app.post('/ajaxlog', function(req, res) {
 
 //Post to get options html data
 app.post('/getoptions', function(req, res) {
+	if(!req.session.userId) return;
 	db.all('select name from department;', function(err, rows) {
 		departments = [];
 		if (err) {
@@ -355,20 +391,20 @@ app.post('/getoptions', function(req, res) {
 				departments.push(row.name);
 			});
 		res.render('options', {
-			search: req.body.search == 'true',
+			search: (req.body.search == 'true')&&(req.body.date != 'true'||req.session.userType==1),
 			date: req.body.date == 'true',
-			dept_list: req.body.dept_list == 'true',
+			dept_list: (req.body.dept_list == 'true')&&(req.body.date != 'true'||req.session.userType==1),
 			departments: departments
 		});
 	});
 });
 
 //POST to get account settings
-app.post('/ajaxaccount',(req,res)=>{
+/*app.post('/ajaxaccount',(req,res)=>{
 	res.render('user', {
 		usertype: req.session.userType
 	});
-});
+});*/
 
 //POST  to update database
 app.post('/ajaxupdate', function(req, res) {
@@ -383,41 +419,50 @@ app.post('/ajaxupdate', function(req, res) {
 
 //POST to change password
 app.post('/ajaxchangepassword',(req,res)=>{
-	db.all('select * from login where username ="'+req.session.userId+'" and password="'+req.body.current_pwd+'";',(err, row)=>{
+	if(!req.session.userId) return;
+	let username=req.session.userId;
+	db.all('select * from login where username ="'+username+'";',(err, row)=>{
 		if(err){
 			console.log(err);
 			res.send('failed');
 		}else{
 			if (row.length) {
-				db.all('update login set password="'+req.body.new_pwd+'" where username="'+req.session.userId+'";',(err)=>{
-					if(err){
-						res.send('failed');
-						console.log(err);
-					}else{
-						res.send('success');
+
+				let password='';
+				if(row[0].autopass==1) password=req.body.current_pwd;
+				else{
+					for(let i=0;i<req.body.current_pwd.length;i++){
+						password+=req.body.current_pwd.charCodeAt(i).toString(32);
 					}
-				})
+				}
+
+				if(password==row[0].password){
+					let newPassword='';
+					for(let i=0;i<req.body.new_pwd.length;i++){
+						newPassword+=req.body.new_pwd.charCodeAt(i).toString(32);
+					}
+
+					db.all('update login set password="'+newPassword+'", autopass=2 where username="'+username+'";',(err)=>{
+						if(err){
+							res.send('failed');
+							console.log(err);
+						}else{
+							req.session.firstLogin=false;
+							res.send('success');
+						}
+					})
+
+				}else{
+					res.send('failed');
+				}
 			} else res.send('failed');
 		}
 	});
 });
 
-//POST to create new user
-app.post('/ajaxnewuser',(req,res)=>{
-	let type=2;
-	if(req.body.type=='Admin')
-		type=1;
-	db.all('insert into login values("'+req.body.username+'","'+req.body.password+'",'+type+');',(err)=>{
-		if(err){
-			res.send('failed');
-		}else{
-			res.send('success');
-		}
-	});
-});
 
 //LOGOUT
-app.post('/logout',(req,res)=>{
+app.get('/logout',(req,res)=>{
 	req.session.destroy();
-	res.send('success');
+	res.redirect('/login');
 })
