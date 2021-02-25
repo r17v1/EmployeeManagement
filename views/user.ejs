@@ -1,0 +1,54 @@
+<div class='c1'>
+    <h1>
+        Change Password!
+    </h1>
+    <div>
+        <label>Current Password</label>
+        <input type="password" ID="current_pwd">
+        <div class=error id='pwd_err'></div>
+    </div>
+    <div>
+        <label>New Password</label>
+        <input type="password" ID="new_pwd">
+    </div>
+    <div>
+        <label>Confirm Password</label>
+        <input type="password" ID="cnew_pwd">
+        <div class=error id='pwd_mismatch_change'></div>
+    </div>
+    <button id="submit_change_password">Submit</button>
+    <div id='success_change' class='success'></div>
+</div>
+
+<% if(usertype==1){ %>
+<div class='c1'>
+    <h1>
+        Create User
+    </h1>
+    <div>
+        <label>User Name</label>
+        <input type="text" ID="new_user_username">
+        <div class=error id='username_taken'></div>
+    </div>
+    <div>
+        <label>Password</label>
+        <input type="password" ID="new_user_pwd">
+    </div>
+    <div>
+        <label>Confirm Password</label>
+        <input type="password" ID="cnew_user_pwd">
+        <div class=error id='pwd_mismatch_new'></div>
+    </div>
+    <div>
+        <label>User Type</label>
+        <select id="usertype">
+            <option selected='selected'>Regular</option>
+            <option>Admin</option>
+        </select>
+    </div>
+    <button id="submit_new_user">Submit</button>
+    <div id='success_new_user' class='success'></div>
+</div>
+<% } %>
+
+<button id="logout">Log Out</button>

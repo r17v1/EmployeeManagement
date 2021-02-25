@@ -117,13 +117,12 @@ th:hover{
     background-color: rgba(255,255,255,0.4);
 }
 
-#options{
+.c1{
     /*border: solid thick rgba(86, 170, 255, 0.8);*/
     display: block;
     position: relative;
     margin:auto;
-    transform: translate(0, -50%); 
-    top:50vh;
+    margin-bottom: 2em;
     background-color: #0D2944;
     z-index: 100;
     width:40%;
@@ -134,21 +133,25 @@ th:hover{
     box-shadow:         inset 0 0 10px #000000;
 }
 
-#options > h1{
+#options{
+    transform: translate(0, -50%); 
+    top:50vh;
+}
+.c1 > h1{
     text-align: center;
     margin-bottom:2em;
     color:white;
 }
 
 
-#options > div {
+.c1 > div {
     display:block;
     margin:auto;
     width:80%;
     margin-top: 1em;
 }
 
-#options > div > input{
+.c1 > div > input{
     width:100%;
     height: 3vh;
     display:block;
@@ -161,7 +164,7 @@ th:hover{
 }
 
 
-#options > div > label{
+.c1 > div > label{
     color: rgb(199, 199, 199);
     display:block;
     margin-bottom: 0.2em;
@@ -169,7 +172,7 @@ th:hover{
     padding-left:none;
 }
 
-#department_selecter{
+.c1>div>select{
     display:block;
     width:100%;
     height:3vh;
@@ -247,13 +250,72 @@ th:hover{
   }
 
   #settings_icon{
-      position: fixed;
+      position: relative;
       top:0;
       left:0;
       margin:0;
-      height: 8vh;
+      height: 5vh;
       display:none;
+      filter:invert(.5)
   }
   #settings_icon:hover{
-    filter:invert(.9);
+    filter:invert(1);
+  }
+
+  @media screen and (max-width: 660px){
+        #menue button{
+            font-size: .75em;
+        }
+        .c1{
+            width:80%;
+        }
+
+        th{
+            font-size:0.5em;
+        }
+        td{
+            font-size: 0.5em;
+        }
+        #data{
+            width:95%;
+            height: 60vh;
+        }
+
+        ::-webkit-scrollbar {
+            width: 0.25em;
+          }
+  }
+
+  .c1 > button{
+    display:block;
+    margin-top: 1em;
+    margin-bottom: 2em;
+    width:40%;
+    height: 5vh;
+    font-size: 1em;
+    transform: translate(-50%,0);
+    position: relative;
+    left:50%;
+  }
+
+  .success{
+      text-align: center;
+      color:green;
+  }
+  .error{
+      text-align:center;
+      color:red;
+  }
+
+
+  #logout{
+    display:block;
+    margin-top: 1em;
+    margin-bottom: 2em;
+    width:40%;
+    height: 5vh;
+    font-size: 1em;
+    transform: translate(-50%,0);
+    position: relative;
+    left:50%;
   }

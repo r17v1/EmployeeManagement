@@ -6,6 +6,9 @@ const { query } = require('express');
 const { spawn } = require('child_process');
 const sqlite3 = require('sqlite3').verbose();
 const Excel = require('exceljs');
+const session = require('express-session');
+const { resolveSoa } = require('dns');
+const { debug } = require('console');
 
 //Connect to database
 let db = new sqlite3.Database(__dirname + '/database/database.db', (err) => {
@@ -25,15 +28,57 @@ app.use(
 
 app.set('view engine', 'ejs');
 app.use('/', express.static('public'));
+app.use('/login', express.static('public'));
+app.use(
+	session({
+		name: 'sid',
+		secret:
+			'jotato! Dio! hoho! ora ora ora ora ora muda muda muda muda muda muda nani!!!! za wardu!!! tomare toki o.',
+		resave: false,
+		saveUninitialized: false,
+		cookie: {
+			maxAge: 1000 * 60 * 60 * 24 * 30,
+			sameSite: true,
+			secure: false
+		}
+	})
+);
+
 
 //Listen for incomming requests
 app.listen(3000, function() {
 	console.log('Listening at port 3000.');
 });
 
+//Login
+app.get('/login', (req,res)=>{
+	if(req.session.userID) res.redirect('/');
+	else res.sendFile('login.html',{root: __dirname});
+});
+
+app.post('/ajaxlogin',(req,res)=>{
+	db.all('select * from login where username ="'+req.body.username+'" and password="'+req.body.password+'";',(err, row)=>{
+		if(err){
+			console.log(err);
+			res.send('failed');
+		}else{
+			if (row.length) {
+				req.session.userId = req.body.username;
+				req.session.userType = row[0].type;
+				res.send('success');
+			} else res.send('failed');
+		}
+	});
+});
+
+
 //Home screen'
 //Send the home.html file when url is visited
 app.get('/', function(req, res) {
+	//console.log(req.session);
+	if(!req.session.userId)
+		res.redirect('/login');
+	else
 	res.sendFile('home.html', {
 		root: __dirname
 	});
@@ -318,6 +363,13 @@ app.post('/getoptions', function(req, res) {
 	});
 });
 
+//POST to get account settings
+app.post('/ajaxaccount',(req,res)=>{
+	res.render('user', {
+		usertype: req.session.userType
+	});
+});
+
 //POST  to update database
 app.post('/ajaxupdate', function(req, res) {
 	//call scrapper python script to update database
@@ -326,3 +378,46 @@ app.post('/ajaxupdate', function(req, res) {
 		res.send('success');
 	});
 });
+
+
+
+//POST to change password
+app.post('/ajaxchangepassword',(req,res)=>{
+	db.all('select * from login where username ="'+req.session.userId+'" and password="'+req.body.current_pwd+'";',(err, row)=>{
+		if(err){
+			console.log(err);
+			res.send('failed');
+		}else{
+			if (row.length) {
+				db.all('update login set password="'+req.body.new_pwd+'" where username="'+req.session.userId+'";',(err)=>{
+					if(err){
+						res.send('failed');
+						console.log(err);
+					}else{
+						res.send('success');
+					}
+				})
+			} else res.send('failed');
+		}
+	});
+});
+
+//POST to create new user
+app.post('/ajaxnewuser',(req,res)=>{
+	let type=2;
+	if(req.body.type=='Admin')
+		type=1;
+	db.all('insert into login values("'+req.body.username+'","'+req.body.password+'",'+type+');',(err)=>{
+		if(err){
+			res.send('failed');
+		}else{
+			res.send('success');
+		}
+	});
+});
+
+//LOGOUT
+app.post('/logout',(req,res)=>{
+	req.session.destroy();
+	res.send('success');
+})
