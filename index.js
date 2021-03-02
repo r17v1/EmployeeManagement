@@ -29,6 +29,7 @@ app.use(
 app.set('view engine', 'ejs');
 app.use('/', express.static('public'));
 app.use('/login', express.static('public'));
+app.use('/profile', express.static('public'));
 app.use(
 	session({
 		name: 'sid',
@@ -44,16 +45,67 @@ app.use(
 	})
 );
 
+let python=null;
+
+let updating=false;
+function update(res){
+	if(python){
+	
+		python.on('close',()=>{
+			if(res)
+				res.send('success');
+			python=null;
+		});
+		
+		return;
+	}else{
+		python = spawn('python', [ 'scrapper.py' ]);
+		python.on('close', () => {
+			if(res)
+				res.send('success');			
+			python=null;
+		});
+	}
+}
+
+
 
 //Listen for incomming requests
 app.listen(3000, function() {
 	console.log('Listening at port 3000.');
+	update();
+});
+
+app.get('/profile',(req,res)=>{
+	if(!req.session.userId){
+		res.redirect('/login');
+		return;
+	}
+	let qry=	'select user.id as id, user.name as name, (select name from department where id=user.department_id)as dept_name,'+ 
+	'email, phone_no, address, designation from user,userInfo where user.id=userInfo.id and user.id=+'+req.session.userId+';';
+	db.all(qry,(err,rows)=>{
+		res.render('profile',{
+			user:{
+				id:rows[0].id,
+				name:rows[0].name,
+				department:rows[0].dept_name,
+				email:rows[0].email,
+				number:rows[0].phone_no,
+				address:rows[0].address,
+				dp:'/images/profile/default'
+			}
+		});
+	})
 });
 
 //Login
 app.get('/login', (req,res)=>{
-	if(req.session.userID) res.redirect('/');
-	else res.sendFile('login.html',{root: __dirname});
+	if(req.session.userId){ 
+		res.redirect('/');
+		return;
+	}
+	res.sendFile('login.html',{root: __dirname});
+	update();
 });
 
 app.post('/ajaxlogin',(req,res)=>{
@@ -409,10 +461,7 @@ app.post('/getoptions', function(req, res) {
 //POST  to update database
 app.post('/ajaxupdate', function(req, res) {
 	//call scrapper python script to update database
-	const python = spawn('python', [ 'scrapper.py' ]);
-	python.on('close', () => {
-		res.send('success');
-	});
+	update(res);
 });
 
 
@@ -466,3 +515,13 @@ app.get('/logout',(req,res)=>{
 	req.session.destroy();
 	res.redirect('/login');
 })
+
+
+
+//update user info
+app.post('/ajaxuserinfo',(req,res)=>{
+	if(!req.session.userId)return;
+	let query='update userInfo set email="'+req.body.email+'", phone_no="'+req.body.number+'", address="'+req.body.address+
+	'" where id='+req.session.userId+' ;';
+	db.all(query);
+});

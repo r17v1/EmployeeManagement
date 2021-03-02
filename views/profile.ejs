@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/profile.css">
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
+    <title>Profile</title>
+</head>
+
+<body>
+    <% if(false){ %>
+        <div id="profile_pic">
+            <img src=<%=user.dp%>>
+            <div>
+                <button id="DPupdate">Update</button>
+            </div>
+        </div>
+    <%}%>
+
+    <div id="user_info" class="formbox">
+        <label>ID</label>
+        <input type="text" value=<%=user.id%> disabled><br>
+        <label>Name</label>
+        <input type="text" value=<%=user.name%> disabled><br>
+        <label>Department</label>
+        <input type="text" disabled value=<%=user.department%> ><br>
+        <label>Email</label>
+        <input id="email" type="email" class='editable' disabled value=<%=user.email%> ><br>
+        <div id="err_email"></div>
+        <label>Address</label>
+        <input id="address" type="text" class='editable'  disabled value=<%=user.address%> ><br>
+        <label>Phone Number(s)</label>
+        <input id="number" type="text" class='editable' disabled value=<%=user.number%>  ><br>
+        <button id="submitEdit">Edit</button>
+    </div>
+
+    
+</body>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="/scripts/userInfo.js"></script>
