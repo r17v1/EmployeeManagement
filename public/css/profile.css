@@ -1,9 +1,15 @@
 #profile_pic{
-    display: inline-block;
-    width: 20%;
-    margin:2.4%;
-    padding:none;
-    top:-25vh;
+    display: block;
+    width: 15%;
+    position: relative;
+    padding:1em;
+    border-radius: 1em;;
+    background-color:white;
+    opacity: 0.6;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 5vh;
+    margin-bottom:none;
 }
 
 img{
@@ -11,29 +17,46 @@ img{
     display: block;
     margin:auto;
 }
-#profile_pic div{
+#profile_pic form{
     display: block;
-    width:50%;
+    width:100%;
     margin:auto;
 }
 
-#profile_pic div button{
+#profile_pic form button{
     display: block;
-    margin:auto;
+    position: relative;
+    width:100%;
+    height: 5vh;
+    transform: translate(-50%,0);
+    left:50%;
+    border-radius: 1em;
+    font-weight: bold;
+    margin-bottom: 1em;
+}
+#profile_pic form input{
+ 
+    width:100%;
+    border:none;
+    -moz-box-shadow:    inset 0 0 10px #000000;
+    -webkit-box-shadow: inset 0 0 10px #000000;
+    box-shadow:         inset 0 0 10px #000000;
+    border-radius: 1em;
 }
 
 #user_info{
     display: block;
+    position: relative;
     width:70%;
-    margin:auto;
+    margin-left:auto;
+    margin-right:auto;
+    margin-bottom:20vh;
     border:none;
     padding:1em;
     background-color: white;
     opacity: 0.6;
     border-radius: 1em;
-    transform: translate(0,-50%);
-    position: relative;
-    top:50vh;
+    margin-top:5vh;
 }
 
 
@@ -56,6 +79,7 @@ body{
     display: inline-block;
     width:20%;
     font-weight: bold;
+    overflow: auto;
 }
 #user_info input{
     padding:1em;
@@ -70,6 +94,21 @@ body{
     color:red;
     text-align: center;
 }
+
+@media screen and (max-width: 660px){
+    body{
+        font-size:0.75em;
+    }
+
+    #profile_pic{
+        width:80%
+    }
+    #user_info{
+        width:80%;
+    }
+    
+}
+
 
 button{
     display: block;

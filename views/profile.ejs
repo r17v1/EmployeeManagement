@@ -11,30 +11,31 @@
 </head>
 
 <body>
-    <% if(false){ %>
+    
         <div id="profile_pic">
             <img src=<%=user.dp%>>
-            <div>
+            <form action='/profile' method="post"  enctype="multipart/form-data">
                 <button id="DPupdate">Update</button>
-            </div>
+            </form>
         </div>
-    <%}%>
 
     <div id="user_info" class="formbox">
         <label>ID</label>
         <input type="text" value=<%=user.id%> disabled><br>
         <label>Name</label>
-        <input type="text" value=<%=user.name%> disabled><br>
+        <input type="text" value="<%=user.name%>" disabled><br>
         <label>Department</label>
-        <input type="text" disabled value=<%=user.department%> ><br>
+        <input type="text" disabled value="<%=user.department%>" ><br>
         <label>Email</label>
-        <input id="email" type="email" class='editable' disabled value=<%=user.email%> ><br>
+        <input id="email" type="email" class='editable' disabled value="<%=user.email%>" ><br>
         <div id="err_email"></div>
         <label>Address</label>
-        <input id="address" type="text" class='editable'  disabled value=<%=user.address%> ><br>
+        <input id="address" type="text" class='editable'  disabled value="<%=user.address%>" ><br>
         <label>Phone Number(s)</label>
-        <input id="number" type="text" class='editable' disabled value=<%=user.number%>  ><br>
-        <button id="submitEdit">Edit</button>
+        <input id="number" type="text" class='editable' disabled value="<%=user.number%>"  ><br>
+        <% if(edit){%> 
+            <button id="submitEdit">Edit</button> 
+        <%}%>
     </div>
 
     

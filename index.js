@@ -9,6 +9,9 @@ const Excel = require('exceljs');
 const session = require('express-session');
 const { resolveSoa } = require('dns');
 const { debug } = require('console');
+const upload = require('express-fileupload');
+const fs=require('fs');
+
 
 //Connect to database
 let db = new sqlite3.Database(__dirname + '/database/database.db', (err) => {
@@ -25,6 +28,14 @@ app.use(
 		extended: true
 	})
 );
+
+
+app.use(
+	upload({
+		createParentPath: true
+	})
+);
+
 
 app.set('view engine', 'ejs');
 app.use('/', express.static('public'));
@@ -76,15 +87,25 @@ app.listen(3000, function() {
 	update();
 });
 
-app.get('/profile',(req,res)=>{
+app.get('/profile/:val',(req,res)=>{
 	if(!req.session.userId){
 		res.redirect('/login');
 		return;
 	}
+	if(req.params.val=='me'){res.redirect('/profile/'+Number(req.session.userId)); return;}
+
+	let edit=false;
+	if(Number(req.params.val)==Number(req.session.userId))
+		edit=true;
+	var UID=req.params.val;
 	let qry=	'select user.id as id, user.name as name, (select name from department where id=user.department_id)as dept_name,'+ 
-	'email, phone_no, address, designation from user,userInfo where user.id=userInfo.id and user.id=+'+req.session.userId+';';
+	'email, phone_no, address, designation from user,userInfo where user.id=userInfo.id and user.id=+'+UID+';';
 	db.all(qry,(err,rows)=>{
-		res.render('profile',{
+		let dp= fs.existsSync(__dirname+'\\public\\images\\profile\\'+UID)	? 
+				'/images/profile/'+UID :
+				'/images/profile/default';
+		
+				res.render('profile',{
 			user:{
 				id:rows[0].id,
 				name:rows[0].name,
@@ -92,8 +113,8 @@ app.get('/profile',(req,res)=>{
 				email:rows[0].email,
 				number:rows[0].phone_no,
 				address:rows[0].address,
-				dp:'/images/profile/default'
-			}
+				dp:dp
+			}, edit:edit
 		});
 	})
 });
@@ -196,7 +217,8 @@ app.post('/ajaxuser', function(req, res) {
 		//Sort by department name
 		sort = 'name ' + req.body.order; //sort by user name
 	var query =
-		'select (select name from department where id=user.department_id)as dept_name, user.id as id, user.name as name from user ';
+		'select (select name from department where id=user.department_id)as dept_name, user.id as id,'+
+		' user.name as name, phone_no,email from user,userInfo ';
 	let flag = false;
 	var search = '';
 	var search_id = [];
@@ -231,6 +253,7 @@ app.post('/ajaxuser', function(req, res) {
 		var extra = 'and ';
 		if (!flag) {
 			extra = 'where ';
+			flag=true;
 		}
 		if (req.body.department == 'Not Assigned') {
 			query += extra + 'dept_name is null ';
@@ -238,6 +261,12 @@ app.post('/ajaxuser', function(req, res) {
 			query += extra + 'dept_name like "' + req.body.department + '" ';
 		}
 	}
+	extra='and ';
+	if(!flag){
+		extra='where ';
+		flag=true;
+	}
+	query+= extra+'user.id=userInfo.id ';
 
 	//setting sort and order constraint
 	query += 'order by ' + sort + ';';
@@ -245,13 +274,13 @@ app.post('/ajaxuser', function(req, res) {
 	//running the querry
 	db.all(query, function(err, rows) {
 		data = [
-			[ 'User ID', 'Name', 'Department Name' ] //Heading
+			[ 'User ID', 'Name','Phone Number(s)','Email', 'Department Name' ] //Heading
 		];
 		if (err) {
 			console.log(err.message);
 		} else
 			rows.forEach((row) => {
-				data.push([ row.id, row.name, row.dept_name ]); //pushing data
+				data.push([ row.id, row.name,row.phone_no,row.email, row.dept_name ]); //pushing data
 			});
 		if (req.body.download != 'true') {
 			res.render('table', {
@@ -524,4 +553,14 @@ app.post('/ajaxuserinfo',(req,res)=>{
 	let query='update userInfo set email="'+req.body.email+'", phone_no="'+req.body.number+'", address="'+req.body.address+
 	'" where id='+req.session.userId+' ;';
 	db.all(query);
+});
+
+app.post('/profile',(req,res)=>{
+	if(!req.session.userId)res.redirect('/login');
+	if(req.files)
+	{	
+		let DP=req.files.DP;
+		DP.mv(__dirname+'\\public\\images\\profile\\'+Number(req.session.userId));
+	}
+	res.redirect('/profile/me');
 });

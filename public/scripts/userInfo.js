@@ -34,11 +34,11 @@ $(document).ready(function() {
     });
 
     $("#DPupdate").click(()=>{
-        $('#profile_pic div').html('<input id="fileul" name="fileul" type="file"  accept="image/*">');
-        $('#profile_pic div').append('<button id="upload">Upload</button>');
+        $('#profile_pic form').html('<input id="fileul" name="DP" type="file"  accept="image/*">');
+        $('#profile_pic form').append('<input type="submit" id="upload">');
     });
 
-    $('#profile_pic').on('click','#upload',()=>{
+    /*$('#profile_pic').on('click','#upload',()=>{
         alert('click');
-    });
+    });*/
 });

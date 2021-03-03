@@ -11,7 +11,11 @@
         <tr>
             <%for(let col=0;col<data[row].length; col++){ %>
                 <td>
+                    <% if(data[0][col]=='User ID'){ %>
+                        <a href=<%= 'profile/'+ data[row][col]%>><%=data[row][col]%> </a> 
+                    <%} else {%>
                     <%=data[row][col]%>
+                    <%}%>
                 </td>
             <% } %>
         </tr>
