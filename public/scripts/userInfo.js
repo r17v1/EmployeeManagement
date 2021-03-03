@@ -1,8 +1,13 @@
 let edit=false;
 
 function isEmail(email) {
+    email_list=email.split(',');
+    let ret=true;
     var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
-    return regex.test(email)||email.length==0;
+    for(i=0;i<email_list.length;i++){
+        ret= ret&&regex.test(email_list[i].trim());
+    }
+    return ret||email.length==0;
 }
   
 
