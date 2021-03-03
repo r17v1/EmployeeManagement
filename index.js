@@ -480,13 +480,6 @@ app.post('/getoptions', function(req, res) {
 	});
 });
 
-//POST to get account settings
-/*app.post('/ajaxaccount',(req,res)=>{
-	res.render('user', {
-		usertype: req.session.userType
-	});
-});*/
-
 //POST  to update database
 app.post('/ajaxupdate', function(req, res) {
 	//call scrapper python script to update database
@@ -555,6 +548,7 @@ app.post('/ajaxuserinfo',(req,res)=>{
 	db.all(query);
 });
 
+//profile pic
 app.post('/profile',(req,res)=>{
 	if(!req.session.userId)res.redirect('/login');
 	if(req.files)
