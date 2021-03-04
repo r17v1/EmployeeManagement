@@ -39,16 +39,26 @@ body{
     margin:none;
     height:8vh;
     width: 16.66666666666666666666%;
-    border-radius: 0.5em;
     border:none;
-    background: transparent;
     font-size: 1.5em;
-    color:white;
     font-weight: bold;
 }
 
 #menue > button:hover{
     background-color: rgba(210, 232, 255, 0.8);
+    color:white;
+}
+.menue_button{
+    background-color:transparent;
+    border-radius: 1em;
+    color:white;
+}
+
+.selected_btn{
+    background-color: #0E1720;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    color:skyblue;
 }
 
 #menue > button:focus{
@@ -64,9 +74,6 @@ body{
     margin-top: 2em;
     overflow: auto;
     padding:0.2em;
-   /* -moz-box-shadow:    inset 0 0 10px #000000;
-    -webkit-box-shadow: inset 0 0 10px #000000;
-    box-shadow:         inset 0 0 10px #000000;*/
 }
 #data:empty{
     display:none;

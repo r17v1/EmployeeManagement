@@ -6,6 +6,22 @@ let current_data = {
 let selected = null;
 let default_set = [ false, false ];
 
+let selected_color='white';
+
+
+
+function updateSelected(){
+	$('.menue_button').each((index,obj)=>{
+		if(selected==obj){
+			$(obj).addClass('selected_btn');
+		}else{
+			$(obj).removeClass('selected_btn');
+		}
+	});
+}
+
+
+
 $(document).ready(function() {
 	let ajax_call = function(_url, _data) {
 		$.ajax({
@@ -68,6 +84,7 @@ $(document).ready(function() {
 
 	$('#department_btn').click(function() {
 		selected=this;
+		updateSelected();
 		$('#settings_icon').css('display','none');
 		$('#update').css('display','none');
 		$('#update').html('');
@@ -84,6 +101,7 @@ $(document).ready(function() {
 	$('#users_btn').click(function() {
 		$('#update').css('display','none');
 		selected=this;
+		updateSelected();
 		$('#update').html('');
 		data = {
 			sort: 'User ID',
@@ -99,6 +117,7 @@ $(document).ready(function() {
 	$('#attendence_btn').click(function() {
 		$('#update').css('display','none');
 		selected=this;
+		updateSelected();
 		$('#update').html('');
 		default_set = [ false, false ];
 		data = {
@@ -119,6 +138,7 @@ $(document).ready(function() {
 		$('#settings_icon').css('display','none');
 		$('#update').css('display','block');
 		selected=this;
+		updateSelected();
 		$('#data').html('');
 		$('#options').html('');
 		$('#update').html('<div class="loader"></div>');
