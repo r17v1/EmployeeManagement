@@ -31,19 +31,16 @@ $(document).ready(function() {
                 number:$('#number').val()
             },
 			method: 'POST',
-            success: ()=>{ console.log('yo mama');}
          });
      }
      edit=!edit;
-     $('#submitEdit').html( edit?"Submit":"Edit" );
+     $('#submitEdit').html( edit?"Save":"Edit" );
     });
 
     $("#DPupdate").click(()=>{
         $('#profile_pic form').html('<input id="fileul" name="DP" type="file"  accept="image/*">');
-        $('#profile_pic form').append('<input type="submit" id="upload">');
+        $('#profile_pic form').append('<input type="submit" id="upload" value="save">');
     });
 
-    /*$('#profile_pic').on('click','#upload',()=>{
-        alert('click');
-    });*/
+    
 });

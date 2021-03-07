@@ -17,10 +17,7 @@ body{
 }
 
 #logo > img {
-    display: block;
-    height: 80%;
-    margin:auto;
-    align-self: center;
+    display: none;
 }
 
 #menue{
@@ -30,15 +27,16 @@ body{
     align-items: center;
     justify-content: center;
     width:100%;
-
-    background-color:#0D2944; /*rgba(134, 195, 255, 0.8);*/
+    height:8vh;
+    background-color:#174570; /*rgba(134, 195, 255, 0.8);*/
 }
 
 
 #menue > button{
+
     margin:none;
-    height:8vh;
     width: 16.66666666666666666666%;
+    height:100%;
     border:none;
     font-size: 1.5em;
     font-weight: bold;
@@ -75,9 +73,9 @@ body{
     overflow: auto;
     padding:0.2em;
 }
-#data:empty{
+/*#data:empty{
     display:none;
-}
+}*/
 #data > table{
     margin-top: auto;
     /*margin:0.1em;*/
@@ -208,7 +206,11 @@ th:hover{
 }
 
 
-#options:empty{
+/*#options:empty{
+    display:none;
+}*/
+
+div:empty{
     display:none;
 }
 
@@ -217,9 +219,10 @@ th:hover{
     border: 16px solid #f3f3f3; /* Light grey */
     border-top: 16px solid #3498db; /* Blue */
     border-radius: 50%;
-    width: 100%;
-    height: 100%;
+    width: 120px;
+    height: 120px;
     animation: spin 2s linear infinite;
+    margin:auto;
   }
   
   @keyframes spin {
@@ -231,7 +234,7 @@ th:hover{
       display:none;
       margin:auto;
       margin-top: 3em;
-      width:120px;
+      width:80%;
       height:120px;
   }
 
@@ -367,4 +370,14 @@ th:hover{
   #account_btn:hover{
       border-bottom-left-radius: 0;
       border-bottom-right-radius: 0;
+  }
+
+  #successimg{
+      display:block;
+      width:20%;
+      margin:auto;
+  }
+  .text{
+    text-align: center;
+    color:white;
   }

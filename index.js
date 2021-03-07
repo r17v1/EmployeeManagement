@@ -171,16 +171,18 @@ app.get('/', function(req, res) {
 		res.redirect('/updatePassword')
 	}
 	else
-	res.sendFile('home.html', {
+	/*res.sendFile('home.html', {
 		root: __dirname
-	});
+	});*/
+	res.render('home')
 });
 
 //Update Password screen
 app.get('/updatePassword',(req,res)=>{
 	if(!req.session.userId)
 		res.redirect('/login');
-	else res.sendFile('updatePassword.html',{root:__dirname});
+	else //res.sendFile('updatePassword.html',{root:__dirname});
+	res.render('updatePassword');
 });
 
 
@@ -352,6 +354,8 @@ app.post('/ajaxlog', function(req, res) {
 	if (flag) {
 		query += ') ';
 	}
+
+	
 
 	if(req.session.userType!=1){
 		query+='having user_id='+req.session.userId+' ';
@@ -551,6 +555,7 @@ app.post('/ajaxuserinfo',(req,res)=>{
 //profile pic
 app.post('/profile',(req,res)=>{
 	if(!req.session.userId)res.redirect('/login');
+	console.log(req);
 	if(req.files)
 	{	
 		let DP=req.files.DP;
@@ -558,3 +563,4 @@ app.post('/profile',(req,res)=>{
 	}
 	res.redirect('/profile/me');
 });
+

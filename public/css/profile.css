@@ -5,7 +5,7 @@
     padding:1em;
     border-radius: 1em;;
     background-color:white;
-    opacity: 0.6;
+    opacity: 0.85;
     margin-left: auto;
     margin-right: auto;
     margin-top: 5vh;
@@ -54,7 +54,7 @@ img{
     border:none;
     padding:1em;
     background-color: white;
-    opacity: 0.6;
+    opacity: 0.85;
     border-radius: 1em;
     margin-top:5vh;
 }
@@ -71,6 +71,16 @@ body{
     border:0;
     font-family: 'Montserrat', sans-serif;
 }
+
+#main_body{
+    display: block;
+    width:100%;
+    padding:0;
+    margin:0;
+    height: 92vh;
+    overflow: auto;
+}
+
 
 
 #user_info label{
@@ -113,7 +123,7 @@ body{
 }
 
 
-button{
+#main_body button{
     display: block;
     position: relative;
     width:20%;
@@ -123,4 +133,9 @@ button{
     border-radius: 1em;
     font-weight: bold;
     margin-bottom: 2em;
+}
+
+
+input:enabled{
+    background-color: rgb(172, 217, 235);
 }

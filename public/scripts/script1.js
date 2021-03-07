@@ -21,62 +21,70 @@ function updateSelected(){
 }
 
 
+let ajax_call = function(_url, _data) {
+	if($(location).attr('href').split(':')[2]!='3000/'){
+		sessionStorage.setItem('button',selected.id);
+		window.location.href='/';
+	}
+
+	$.ajax({
+		url: _url,
+		data: _data,
+		method: 'POST',
+		success: function(res) {
+			//console.log(res);
+			if (!_data.download)
+				if (_url == '/ajaxupdate') {
+					$('#update').html('<img src="images/success.png" alt="Success" id="successimg">');
+				} else $('#data').html(res.toString());
+			else {
+				window.location = res.toString();
+			}
+
+			$('#fdate').ready(() => {
+				if (!default_set[0]) {
+					$('#fdate').val(new Date().toISOString().slice(0, 10));
+					default_set[0] = true;
+				}
+			});
+
+			$('#tdate').ready(() => {
+				if (!default_set[1]) {
+					$('#tdate').val(new Date().toISOString().slice(0, 10));
+					default_set[1] = true;
+				}
+			});
+
+			current_data = _data;
+			current_url = _url;
+
+			if(_url=='/ajaxuser'||_url=='/ajaxlog'){
+				$('#settings_icon').css('display','block');
+			}
+		}
+	});
+};
+
+let ajax_options = function(search, date, dept_list) {
+	$.ajax({
+		url: '/getoptions',
+		data: {
+			search: search,
+			date: date,
+			dept_list: dept_list
+		},
+		method: 'POST',
+		success: function(res) {
+			//console.log(res);
+			$('#options').html(res.toString());
+		}
+	});
+};
+
 
 $(document).ready(function() {
-	let ajax_call = function(_url, _data) {
-		$.ajax({
-			url: _url,
-			data: _data,
-			method: 'POST',
-			success: function(res) {
-				//console.log(res);
-				if (!_data.download)
-					if (_url == '/ajaxupdate') {
-						$('#update').html('<img src="images/success.png" alt="Success">');
-					} else $('#data').html(res.toString());
-				else {
-					window.location = res.toString();
-				}
+		
 
-				$('#fdate').ready(() => {
-					if (!default_set[0]) {
-						$('#fdate').val(new Date().toISOString().slice(0, 10));
-						default_set[0] = true;
-					}
-				});
-
-				$('#tdate').ready(() => {
-					if (!default_set[1]) {
-						$('#tdate').val(new Date().toISOString().slice(0, 10));
-						default_set[1] = true;
-					}
-				});
-
-				current_data = _data;
-				current_url = _url;
-
-				if(_url=='/ajaxuser'||_url=='/ajaxlog'){
-					$('#settings_icon').css('display','block');
-				}
-			}
-		});
-	};
-
-	let ajax_options = function(search, date, dept_list) {
-		$.ajax({
-			url: '/getoptions',
-			data: {
-				search: search,
-				date: date,
-				dept_list: dept_list
-			},
-			method: 'POST',
-			success: function(res) {
-				//console.log(res);
-				$('#options').html(res.toString());
-			}
-		});
-	};
 
 	$('#logout_btn').click(()=>{
 		window.location.replace('/logout');
@@ -141,7 +149,7 @@ $(document).ready(function() {
 		updateSelected();
 		$('#data').html('');
 		$('#options').html('');
-		$('#update').html('<div class="loader"></div>');
+		$('#update').html('<div class="loader">.</div><div class=text>Please wait a few seconds. Sinking!</div>');
 		ajax_call('/ajaxupdate', current_data);
 	});
 
@@ -211,5 +219,25 @@ $(document).ready(function() {
 			$('#overlay').css('display','none');
 		}
 	  });
+
+	  if(sessionStorage.getItem('button')){
+		
+		$('#'+sessionStorage.getItem('button')).trigger('click');
+		sessionStorage.removeItem('button');
+	}
 	
 });
+
+function profile(){
+	selected=$('#account_btn')[0];
+	updateSelected();
+	$.ajax($.ajax({
+		url: '/profile',
+		data: {},
+		method: 'POST',
+		success: function(res) {
+			
+		}
+			
+	}))
+}
