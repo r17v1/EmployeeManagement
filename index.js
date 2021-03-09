@@ -11,6 +11,7 @@ const { resolveSoa } = require('dns');
 const { debug } = require('console');
 const upload = require('express-fileupload');
 const fs=require('fs');
+const kill  = require('tree-kill');
 
 
 //Connect to database
@@ -57,29 +58,47 @@ app.use(
 );
 
 let python=null;
-
-let updating=false;
+let timeOutID=null;
 function update(res){
+	let timeOutID= setTimeout(()=>{
+		if(python){
+			spawn("taskkill", ["/pid", python.pid, '/f', '/t']);
+			console.log('kill');
+			python=null;
+			if(res)
+				res.send('failed');
+			timeOutID=null;
+		}
+	},30000)
 	if(python){
 	
-		python.on('close',()=>{
+		python.on('close',(code)=>{
+			console.log(code);
 			if(res)
 				res.send('success');
 			python=null;
+			if(timeOutID){
+				clearTimeout(timeOutID);
+				timeOutID=null;
+			}
 		});
 		
 		return;
 	}else{
-		python = spawn('python', [ 'scrapper.py' ]);
-		python.on('close', () => {
+		python = spawn(__dirname+'\\scrapper\\scrapper.exe' );//exec(__dirname+'\\scrapper\\scrapper.exe',{timeout:5000})//;
+		python.on('close', (code) => {
+			console.log(code);
 			if(res)
 				res.send('success');			
 			python=null;
+			
+			if(timeOutID){
+				clearTimeout(timeOutID);
+				timeOutID=null;
+			}
 		});
 	}
 }
-
-
 
 //Listen for incomming requests
 app.listen(3000, function() {
@@ -287,7 +306,8 @@ app.post('/ajaxuser', function(req, res) {
 		if (req.body.download != 'true') {
 			res.render('table', {
 				//sending data
-				data: data
+				data: data,
+				viewAccess: req.session.userType>=1
 			});
 		} else {
 			//if download is true, generate excel file and send it for download
@@ -331,7 +351,7 @@ app.post('/ajaxlog', function(req, res) {
 	let flag = false;
 	let search = '';
 	let search_id = [];
-	if (req.body.search != '' && req.session.userType==1) {
+	if (req.body.search != '' && req.session.userType>=1) {
 		let words = req.body.search.split(',');
 		for (let i = 0; i < words.length; i++) {
 			if (i == 0) {
@@ -357,7 +377,7 @@ app.post('/ajaxlog', function(req, res) {
 
 	
 
-	if(req.session.userType!=1){
+	if(req.session.userType<1){
 		query+='having user_id='+req.session.userId+' ';
 		flag=true;
 	}
@@ -476,10 +496,11 @@ app.post('/getoptions', function(req, res) {
 				departments.push(row.name);
 			});
 		res.render('options', {
-			search: (req.body.search == 'true')&&(req.body.date != 'true'||req.session.userType==1),
+			search: (req.body.search == 'true')&&(req.body.date != 'true'||req.session.userType>=1),
 			date: req.body.date == 'true',
-			dept_list: (req.body.dept_list == 'true')&&(req.body.date != 'true'||req.session.userType==1),
-			departments: departments
+			dept_list: (req.body.dept_list == 'true')&&(req.body.date != 'true'||req.session.userType>=1),
+			departments: departments,
+			headers:['Date','Name']
 		});
 	});
 });

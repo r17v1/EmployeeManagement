@@ -28,13 +28,26 @@
 <div>
         <label>Department</label>
         <select name="department" id="department_selecter">
-            <option selected="selected">All</option>
+            <option selected>All</option>
             <option>Not Assigned</option>
             <% departments.forEach( (dept) => {  %>
                 <option><%= dept %></option>
             <% } ); %>
         </select>
 </div>
+<div>
+        <label>Sort by</label>
+        <select name='cort' id='sort_selecter'>
+                <% headers.forEach( (heading,i) => {  %>
+                       <% if(i==0){ %>
+                         <option selected><%= heading %></option>
+                        <%} else{%>
+                                <option><%= heading %></option>
+                        <%}%>
+                <% } ); %>
+        </select>
+</div>
+
 <% } %>
 <div id='buttons'>
     <button type="button" id="search_btn">Search</button>

@@ -372,9 +372,9 @@ div:empty{
       border-bottom-right-radius: 0;
   }
 
-  #successimg{
+  .msgimg{
       display:block;
-      width:20%;
+      width:15%;
       margin:auto;
   }
   .text{

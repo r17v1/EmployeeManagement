@@ -1,8 +1,8 @@
 
-<table>
+<table id="myTable">
     <tr>
         <% for(let i=0; i<data[0].length;i++){ %>
-            <th class='first_row'>
+            <th class='first_row' onclick=<%= 'sortTable('+i+')' %> >
                 <%=data[0][i]%>
             </th>
         <% } %>
@@ -11,8 +11,10 @@
         <tr>
             <%for(let col=0;col<data[row].length; col++){ %>
                 <td>
-                    <% if(data[0][col]=='User ID'){ %>
-                        <a href=<%= 'profile/'+ data[row][col]%>><%=data[row][col]%> </a> 
+                    <% if(data[0][col]=='User ID' && viewAccess){ %>
+                        
+                        (<a href=<%= 'profile/'+ data[row][col]%>>View</a>) 
+                        <%=data[row][col]%>
                     <%} else {%>
                     <%=data[row][col]%>
                     <%}%>
