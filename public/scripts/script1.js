@@ -133,13 +133,14 @@ let ajax_call = function(_url, _data) {
 	});
 };
 
-let ajax_options = function(search, date, dept_list) {
+let ajax_options = function(search, date, dept_list,report) {
 	$.ajax({
 		url: '/getoptions',
 		data: {
 			search: search,
 			date: date,
-			dept_list: dept_list
+			dept_list: dept_list,
+			report:report
 		},
 		method: 'POST',
 		success: function(res) {
@@ -186,7 +187,7 @@ $(document).ready(function() {
 			department: 'All'
 		};
 		url = '/ajaxuser';
-		ajax_options(true, false, true);
+		ajax_options(true, false, true,false);
 		ajax_call(url, data);
 	});
 
@@ -202,10 +203,11 @@ $(document).ready(function() {
 			tdate: new Date().toISOString().slice(0, 10),
 			fdate: new Date().toISOString().slice(0, 10),
 			search: '',
-			department: 'All'
+			department: 'All',
+			fullReport: true
 		};
 		url = '/ajaxlog';
-		ajax_options(true, true, true);
+		ajax_options(true, true, true,true);
 		ajax_call(url, data);
 	});
 
@@ -220,30 +222,7 @@ $(document).ready(function() {
 		$('#update').html('<div class="loader">.</div><div class=text>Please wait a few seconds. Sinking!</div>');
 		ajax_call('/ajaxupdate', current_data);
 	});
-	/*
-	$('#data').on('click', 'table tr th', function() {
-		current_data.download = false;
-		let btn_name = this.textContent.trim();
-		if (btn_name == 'Time') return;
-		//alert(btn_name==current_data.sort);
-		data = current_data;
 
-		if (btn_name == current_data.sort) {
-			if (current_data.order == 'asc') {
-				(data.sort = btn_name), (data.order = 'desc');
-
-				ajax_call(current_url, data);
-			} else {
-				(data.sort = btn_name), (data.order = 'asc');
-
-				ajax_call(current_url, data);
-			}
-		} else {
-			(data.sort = btn_name), (data.order = 'asc');
-			ajax_call(current_url, data);
-		}
-	});
-	*/
 	$('#options').on('click', '#search_btn', () => {
 		data = {
 			sort: current_data.sort,
@@ -251,7 +230,8 @@ $(document).ready(function() {
 			search: ($('#search').val())?$('#search').val().trim():null,
 			fdate:  $('#fdate').val(),
 			tdate: $('#tdate').val(),
-			department: $('#department_selecter option:selected').text()
+			department: $('#department_selecter option:selected').text(),
+			fullReport: $('#report option:selected').text()=='Full Report'
 		};
 		ajax_call(current_url, data);
 		//alert('clicked');

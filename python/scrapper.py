@@ -200,11 +200,11 @@ for i in range(len(CSV)):
         + ")"
     )
 
-data2 = SQL.execute("select * from log_backup")
-for d in data2:
-    SQL.execute(
-        'insert or ignore into log values("' + str(d[0]) + '",' + str(d[1]) + ")"
-    )
+#data2 = SQL.execute("select * from log_backup")
+#for d in data2:
+#    SQL.execute(
+#        'insert or ignore into log values("' + str(d[0]) + '",' + str(d[1]) + ")"
+#    )
 
 
 #closing connections and drivers

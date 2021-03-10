@@ -12,6 +12,7 @@ const { debug } = require('console');
 const upload = require('express-fileupload');
 const fs=require('fs');
 const kill  = require('tree-kill');
+const { Session } = require('inspector');
 
 
 //Connect to database
@@ -85,7 +86,7 @@ function update(res){
 		
 		return;
 	}else{
-		python = spawn(__dirname+'\\scrapper\\scrapper.exe' );//exec(__dirname+'\\scrapper\\scrapper.exe',{timeout:5000})//;
+		python = spawn('python',[__dirname+'\\python\\scrapper.py'])//spawn(__dirname+'\\scrapper\\scrapper.exe' );
 		python.on('close', (code) => {
 			console.log(code);
 			if(res)
@@ -113,12 +114,19 @@ app.get('/profile/:val',(req,res)=>{
 	}
 	if(req.params.val=='me'){res.redirect('/profile/'+Number(req.session.userId)); return;}
 
-	let edit=false;
-	if(Number(req.params.val)==Number(req.session.userId))
+	let edit=false,myProfile=false;
+	if(req.session.userType==2)
 		edit=true;
+	if(Number(req.params.val)==Number(req.session.userId) ){
+		myProfile=true;
+		edit=true;
+	}
+
+	if(!myProfile && req.session.userType<1) {res.redirect('/profile/'+Number(req.session.userId)); return;}
+
 	var UID=req.params.val;
-	let qry=	'select user.id as id, user.name as name, (select name from department where id=user.department_id)as dept_name,'+ 
-	'email, phone_no, address, designation from user,userInfo where user.id=userInfo.id and user.id=+'+UID+';';
+	let qry=	'select user.id as id, user.name as name,(select type from login where cast(username as NUMERIC)=user.id)as type, (select name from department where id=user.department_id)as dept_name,'+ 
+	'email, phone_no,alt_no,salary, address, designation from user,userInfo where user.id=userInfo.id and user.id=+'+UID+';';
 	db.all(qry,(err,rows)=>{
 		let dp= fs.existsSync(__dirname+'\\public\\images\\profile\\'+UID)	? 
 				'/images/profile/'+UID :
@@ -129,11 +137,17 @@ app.get('/profile/:val',(req,res)=>{
 				id:rows[0].id,
 				name:rows[0].name,
 				department:rows[0].dept_name,
+				designation:rows[0].designation,
 				email:rows[0].email,
 				number:rows[0].phone_no,
+				alt_number:rows[0].alt_no,
+				salary:rows[0].salary,
 				address:rows[0].address,
-				dp:dp
-			}, edit:edit
+				dp:dp,
+				acc_types : [['Regular',Number(rows[0].type)==0],['View',Number(rows[0].type)==1],['Admin',Number(rows[0].type)==2]]
+			}, 
+			edit:edit,
+			myProfile:myProfile
 		});
 	})
 });
@@ -239,7 +253,7 @@ app.post('/ajaxuser', function(req, res) {
 		sort = 'name ' + req.body.order; //sort by user name
 	var query =
 		'select (select name from department where id=user.department_id)as dept_name, user.id as id,'+
-		' user.name as name, phone_no,email from user,userInfo ';
+		' user.name as name,designation, phone_no,alt_no,email from user,userInfo ';
 	let flag = false;
 	var search = '';
 	var search_id = [];
@@ -295,13 +309,13 @@ app.post('/ajaxuser', function(req, res) {
 	//running the querry
 	db.all(query, function(err, rows) {
 		data = [
-			[ 'User ID', 'Name','Phone Number(s)','Email', 'Department Name' ] //Heading
+			[ 'User ID', 'Name','Designation','Phone Number','Alternate Number','Email', 'Department Name' ] //Heading
 		];
 		if (err) {
 			console.log(err.message);
 		} else
 			rows.forEach((row) => {
-				data.push([ row.id, row.name,row.phone_no,row.email, row.dept_name ]); //pushing data
+				data.push([ row.id, row.name,row.designation,row.phone_no,row.alt_no,row.email, row.dept_name ]); //pushing data
 			});
 		if (req.body.download != 'true') {
 			res.render('table', {
@@ -418,6 +432,7 @@ app.post('/ajaxlog', function(req, res) {
 	});
 
 	let finalrender = function(data, req, res) {
+		if(req.body.fullReport=='true'){
 		len = 0;
 		data.forEach((row) => {
 			len = Math.max(len, row.length);
@@ -427,6 +442,19 @@ app.post('/ajaxlog', function(req, res) {
 				if (i == 0) data[i].push('Time');
 				else data[i].push('');
 			}
+		}
+		}else{
+			
+			for (let i = 0; i < data.length; i++) {
+				if(i==0){
+					data[i].push(['Entry Time']);
+					data[i].push(['Exit Time']);
+				}
+				else if(data[i].length>5)
+					data[i][5]=data[i][data[i].length-1];
+				data[i].length=6;
+			}
+			
 		}
 		if (req.body.download != 'true') {
 			res.render('table', {
@@ -500,7 +528,8 @@ app.post('/getoptions', function(req, res) {
 			date: req.body.date == 'true',
 			dept_list: (req.body.dept_list == 'true')&&(req.body.date != 'true'||req.session.userType>=1),
 			departments: departments,
-			headers:['Date','Name']
+			headers:['Date','Name'],
+			report: req.body.report=='true'
 		});
 	});
 });
@@ -568,9 +597,25 @@ app.get('/logout',(req,res)=>{
 //update user info
 app.post('/ajaxuserinfo',(req,res)=>{
 	if(!req.session.userId)return;
-	let query='update userInfo set email="'+req.body.email+'", phone_no="'+req.body.number+'", address="'+req.body.address+
-	'" where id='+req.session.userId+' ;';
-	db.all(query);
+	let query;
+	if(Number(req.body.uid)==Number(req.session.userId)){
+		query='update userInfo set email="'+req.body.email+'", phone_no="'+req.body.number+'", alt_no="'+
+		req.body.alt_number+'", address="'+req.body.address+ '" where id='+req.session.userId+' ;';
+		db.all(query);
+	}
+
+	if(req.session.userType==2){
+		query='update userInfo set designation="'+req.body.designation+'", salary="'+req.body.salary + 
+		'" where id='+req.body.uid+' ;';
+		db.all(query);
+		accTypes={
+			'Regular':0,
+			'View':1,
+			'Admin':2
+		}
+		query='update login set type='+accTypes[req.body.acc_type]+' where username="'+String(req.body.uid).padStart(4,'0')+'" ;';
+		db.all(query);
+	}
 });
 
 //profile pic

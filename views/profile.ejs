@@ -20,18 +20,34 @@
 
     <div id="user_info" class="formbox">
         <label>ID</label>
-        <input type="text" value=<%=user.id%> disabled><br>
+        <input id='uid' type="text" value=<%=user.id%> disabled><br>
         <label>Name</label>
         <input type="text" value="<%=user.name%>" disabled><br>
         <label>Department</label>
         <input type="text" disabled value="<%=user.department%>" ><br>
+        <label>Designation</label>
+        <input id='designation' type="text" class='admin_editable' disabled value="<%=user.designation%>" ><br>
+        <label>Salary</label>
+        <input id='salary' type="number" class='admin_editable' disabled value="<%=user.salary%>" ><br>
+        <label>Account Type</label>
+        <select id='acc_type' class='admin_editable' disabled>
+            <% user.acc_types.forEach((i)=>{ %>
+                <%if(i[1]){%>
+                    <option selected><%=i[0]%></option>
+                <%}else{%>
+                    <option><%=i[0]%></option>
+                <%}%>
+            <%})%>
+        </select> <br>
         <label>Email</label>
         <input id="email" type="email" class='editable' disabled value="<%=user.email%>" ><br>
         <div id="err_email"></div>
-        <label>Address</label>
+        <label>Home Address</label>
         <input id="address" type="text" class='editable'  disabled value="<%=user.address%>" ><br>
-        <label>Phone Number(s)</label>
+        <label>Phone Number</label>
         <input id="number" type="text" class='editable' disabled value="<%=user.number%>"  ><br>
+        <label>Alternate Number</label>
+        <input id="alt_number" type="text" class='editable' disabled value="<%=user.alt_number%>"  ><br>
         <% if(edit){%> 
             <button id="submitEdit">Edit</button> 
         <%}%>

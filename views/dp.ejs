@@ -1,4 +1,6 @@
 <img src=<%=user.dp%>>
 <form action='/profile' method="post"  enctype="multipart/form-data" id="DP_form">
+    <%if(myProfile){%>
     <button id="DPupdate">Update</button>
+    <%}%>
 </form>

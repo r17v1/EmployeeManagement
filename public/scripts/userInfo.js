@@ -17,24 +17,36 @@ $(document).ready(function() {
             $('#err_email').text('Please enter valid email!');
             return;
         }
+        let isMe= $('#DP_form').html().trim().length!=0;
+        let isAdmin=(($('#acc_type option:selected').text()=='Admin')&&isMe)||!isMe;
+       
         $('#err_email').text('');
 
         $('.editable').each((index,obj)=>{
-            obj.disabled=edit;
-     });
-     if(edit){
-         $.ajax({
-            url: '/ajaxuserinfo',
-			data: {
-                email: $('#email').val(),
-                address:$('#address').val(),
-                number:$('#number').val()
-            },
-			method: 'POST',
-         });
-     }
-     edit=!edit;
-     $('#submitEdit').html( edit?"Save":"Edit" );
+            obj.disabled=(edit || !isMe) ;
+        });
+        $('.admin_editable').each((index,obj)=>{
+            obj.disabled=(edit || !isAdmin);
+        });
+
+        if(edit){
+            $.ajax({
+               url: '/ajaxuserinfo',
+	    		data: {
+                    uid: $('#uid').val(),
+                    email: $('#email').val(),
+                    address:$('#address').val(),
+                    number:$('#number').val(),
+                    alt_number:$('#alt_number').val(),
+                    designation:$('#designation').val(),
+                    salary:$('#salary').val(),
+                    acc_type:$('#acc_type option:selected').text()
+               },
+	    		method: 'POST',
+            });
+        }
+        edit=!edit;
+        $('#submitEdit').html( edit?"Save":"Edit" );
     });
 
     $("#DPupdate").click(()=>{
