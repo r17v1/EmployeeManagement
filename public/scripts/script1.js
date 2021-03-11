@@ -8,7 +8,6 @@ let default_set = [ false, false ];
 
 let selected_color='white';
 
-
 function sortTable(n) {
 	var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
 	table = document.getElementById("myTable");
@@ -219,7 +218,7 @@ $(document).ready(function() {
 		updateSelected();
 		$('#data').html('');
 		$('#options').html('');
-		$('#update').html('<div class="loader">.</div><div class=text>Please wait a few seconds. Sinking!</div>');
+		$('#update').html('<div class="loader">.</div><div class=text>Relax! It will take a few seconds to update!<br> Syncing....</div>');
 		ajax_call('/ajaxupdate', current_data);
 	});
 
@@ -289,3 +288,4 @@ function profile(){
 			
 	}))
 }
+

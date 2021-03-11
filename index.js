@@ -74,7 +74,6 @@ function update(res){
 	if(python){
 	
 		python.on('close',(code)=>{
-			console.log(code);
 			if(res)
 				res.send('success');
 			python=null;
@@ -88,7 +87,6 @@ function update(res){
 	}else{
 		python = spawn('python',[__dirname+'\\python\\scrapper.py'])//spawn(__dirname+'\\scrapper\\scrapper.exe' );
 		python.on('close', (code) => {
-			console.log(code);
 			if(res)
 				res.send('success');			
 			python=null;
@@ -144,7 +142,7 @@ app.get('/profile/:val',(req,res)=>{
 				salary:rows[0].salary,
 				address:rows[0].address,
 				dp:dp,
-				acc_types : [['Regular',Number(rows[0].type)==0],['View',Number(rows[0].type)==1],['Admin',Number(rows[0].type)==2]]
+				acc_types : [['Regular',Number(rows[0].type)==0],['View Access',Number(rows[0].type)==1],['Admin Access',Number(rows[0].type)==2]]
 			}, 
 			edit:edit,
 			myProfile:myProfile
@@ -610,8 +608,8 @@ app.post('/ajaxuserinfo',(req,res)=>{
 		db.all(query);
 		accTypes={
 			'Regular':0,
-			'View':1,
-			'Admin':2
+			'View Access':1,
+			'Admin Access':2
 		}
 		query='update login set type='+accTypes[req.body.acc_type]+' where username="'+String(req.body.uid).padStart(4,'0')+'" ;';
 		db.all(query);
@@ -630,3 +628,12 @@ app.post('/profile',(req,res)=>{
 	res.redirect('/profile/me');
 });
 
+
+
+app.post('/getid',(req,res)=>{
+	if(!req.session.userId)return;
+	res.send({
+		id:req.session.userId,
+		type: req.session.userType
+	});
+})

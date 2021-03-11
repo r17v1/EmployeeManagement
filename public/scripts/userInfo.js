@@ -1,3 +1,17 @@
+let myInfo=null;
+
+
+$.ajax({
+	url:'/getid',
+	method:'POST',
+	success: (res)=>{
+		myInfo=res;
+	}
+});
+
+
+
+
 let edit=false;
 
 function isEmail(email) {
@@ -17,8 +31,8 @@ $(document).ready(function() {
             $('#err_email').text('Please enter valid email!');
             return;
         }
-        let isMe= $('#DP_form').html().trim().length!=0;
-        let isAdmin=(($('#acc_type option:selected').text()=='Admin')&&isMe)||!isMe;
+        let isMe= myInfo.id==window.location.pathname.split('/')[2];
+        let isAdmin=myInfo.type==2;
        
         $('#err_email').text('');
 

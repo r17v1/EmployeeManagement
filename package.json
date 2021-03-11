@@ -16,6 +16,7 @@
     "express-fileupload": "^1.2.1",
     "express-session": "^1.17.1",
     "http-msgs": "^1.0.9",
+    "pm2": "^4.5.5",
     "sqlite3": "^5.0.2",
     "tree-kill": "^1.2.2",
     "zklib": "^0.2.11"
